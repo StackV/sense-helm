@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  all_dump.sql: ""
+kind: ConfigMap
+metadata:
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    stackv/service: mysql
+    stackv/stack: app
+  name: {{.Release.Name}}-mysql-init-dump

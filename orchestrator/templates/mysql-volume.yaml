@@ -1,0 +1,23 @@
+{{- if .Values.mysql.generatePVC }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: {{ .Values.global.namespace }}
+  annotations:
+    helm.sh/resource-policy: "keep"
+  labels:
+    stackv/service: mysql
+    stackv/stack: app
+  name: {{.Release.Name}}-{{.Values.mysql.pvcName}}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  {{- if or (eq .Values.global.mode "test") (.Values.mysql.pvcClass) }}
+  {{- else }}
+  storageClassName: {{.Values.mysql.pvcClass}} # rook-ceph-block-east
+  {{- end }}
+{{- end }}

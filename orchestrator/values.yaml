@@ -1,0 +1,129 @@
+### SENSE Orchestrator Configuration
+###
+
+## @section Global Parameters
+##
+#
+global:
+  ## @param global.namespace The target namespace.
+  namespace: sense
+  ## @param global.mode If set to 'test', enables CD test server behavior (seed/reset SQL DB with integration test data).
+  mode: prod
+  ## @param global.domain The host domain for the orchestrator.
+  domain: stackv.sense.es.net
+  ## @param global.keycloak The domain of an active Keycloak instance, used for authentication.
+  keycloak: auth.sense.es.net
+  ## @param global.credSecret Secret name for the chart's basic credentials.
+  credSecret: sense-cred
+## @section Orchestrator Parameters
+##
+#
+image:
+  ## @param image.repo Orchestrator image.
+  repo: virnao/stackv-orchestrator
+  ## @param image.tag Image tag to pull.
+  tag: latest
+  ## @param image.pullSecrets Secrets for any private docker registry access.
+  pullSecrets: []
+#
+ingress:
+  ## @param ingress.enabled Whether to enable the ingress resource.
+  enabled: true
+  ## @param ingress.className Ingress class.
+  className: traefik
+  ## @param ingress.hostname Explicit host to be used for the ingress. Defaults to `domain` if unset.
+  hostname:
+  ## @param ingress.annotations Ingress annotations.
+  annotations:
+  ## @param ingress.tlsSecret TLS secret name for ingress termination.
+  tlsSecret: tls-stackv-orchestrator
+#
+resources:
+  #
+  requests:
+    ## @param resources.requests.cpu Orchestrator CPU request.
+    cpu: 2000m
+    ## @param resources.requests.memory Orchestrator memory request.
+    memory: 8Gi
+  #
+  limits:
+    ## @param resources.limits.cpu Orchestrator CPU limit.
+    cpu: 16000m
+    ## @param resources.limits.memory Orchestrator memory limit.
+    memory: 64Gi
+#
+service:
+  ## @param service.type Orchestrator service type.
+  type: ClusterIP
+  #
+  ports:
+    ## @param service.ports.http Orchestrator HTTP port.
+    http: 8080
+    ## @param service.ports.https Orchestrator HTTPS port.
+    https: 8443
+    #
+    debug:
+      ## @param service.ports.debug.enabled If set to `true`, will enable a set of debug and management ports.
+      enabled: false
+      ## @param service.ports.debug.consoleHttp Wildfly HTTP port.
+      consoleHttp: 9990
+      ## @param service.ports.debug.consoleHttps Wildfly HTTPS port.
+      consoleHttps: 9993
+      ## @param service.ports.debug.debugger Wildfly debug port.
+      debugger: 8787
+## @param nodeSelector Orchestrator nodeSelector block.
+nodeSelector: {}
+## @param tolerations Orchestrator tolerations block.
+tolerations: []
+## @param affinity Orchestrator affinity block.
+affinity: {}
+#
+tls:
+  ## @param tls.passwordKey Key of the password for the orchestrator keystore files, found in `.global.credSecret`.
+  passwordKey: tls-password
+  ## @param tls.keystoreSecret Name of Kubernetes secret for the orchestrator keystore files. If unset, will automatically create the secret and set default keystores.
+  keystoreSecret: sense-keystores
+## @section MySQL Parameters
+## Configuration for the built-in mysql server.
+#
+mysql:
+  ## @param mysql.passwordKey Key of the password for the mysql database, found in `.global.credSecret`.
+  passwordKey: mysql-password
+  ## @param mysql.generatePVC If set to true, will generate a dynamic PVC. If set to false, pvcName should almost always be set.
+  generatePVC: true
+  ## @param mysql.pvcName PVC name.
+  pvcName: mysql-pvc
+  ## @param mysql.pvcClass PVC class for the mysql persistence.
+  pvcClass: local-path
+  #
+  resources:
+    #
+    requests:
+      ## @param mysql.resources.requests.cpu MySQL CPU request.
+      cpu: 300m
+      ## @param mysql.resources.requests.memory MySQL memory request.
+      memory: 1Gi
+    #
+    limits:
+      ## @param mysql.resources.limits.cpu MySQL CPU limit.
+      cpu: 1000m
+      ## @param mysql.resources.limits.memory MySQL memory limit.
+      memory: 4Gi
+  ## @param mysql.nodeSelector MySQL nodeSelector block.
+  nodeSelector: {}
+  ## @param mysql.tolerations MySQL tolerations block.
+  tolerations: []
+  ## @param mysql.affinity MySQL affinity block.
+  affinity: {}
+## @section SMTP Parameters
+## Configuration for the pilot Wildfly built-in mail system. Currently experimental.
+#
+mail:
+  ## @param mail.host Host of an external SMTP server for orchestrator notifications. Leave unchanged (smtp.office365.com) if not in-use.
+  host: smtp.office365.com
+  ## @param mail.port Port of the above SMTP server. Leave unchanged (587) even if not in-use.
+  port: "587"
+  ## @param mail.username Username to connect to the above SMTP server.
+  username: example@outlook.com
+  ## @param mail.passwordKey Key of the password for the mail authentication, found in `.global.credSecret`.
+  passwordKey: mail-password

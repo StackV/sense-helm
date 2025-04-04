@@ -1,0 +1,12 @@
+.vscode/
+
+keys/
+cred.yml
+cred.yaml
+override-*.yaml
+# update-pipelines.sh
+
+test.yaml
+sqitch/*.env
+
+kube/**/charts

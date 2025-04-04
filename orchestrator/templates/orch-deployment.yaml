@@ -1,0 +1,140 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    stackv/service: orchestrator
+    app.kubernetes.io/name: {{.Release.Name}}-orchestrator
+  name: {{.Release.Name}}-orch
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  minReadySeconds: 10
+  selector:
+    matchLabels:
+      stackv/service: orchestrator
+      app.kubernetes.io/name: {{.Release.Name}}-orchestrator
+  template:
+    metadata:
+      annotations:
+        stackv/tag: {{ .Values.image.tag | default .Chart.AppVersion }}
+        link.argocd.argoproj.io/external-link: https://{{ .Values.ingress.hostname | default .Values.global.domain }}/StackV-web/portal/
+      labels:
+        stackv/service: orchestrator
+        app.kubernetes.io/name: {{ .Release.Name }}-orchestrator
+      name: {{ .Release.Name }}-orch
+    spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - args:
+            - /bin/wait-for-it.sh
+            - {{ .Release.Name }}-mysql:3306
+            - "-t"
+            - "600"
+            - "-s"
+            - "--"
+            - sh
+            - "-c"
+            - /bin/startup.sh
+          env:
+            - name: KC_DOMAIN
+              value: "{{.Values.global.keycloak}}"
+            - name: NO_SERVER_KEYSTORE
+              value: "true"
+            - name: DB_HOST
+              value: "{{.Release.Name}}-mysql:3306"
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.credSecret }}
+                  key: {{ .Values.mysql.passwordKey }}
+            - name: TLS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.credSecret }}
+                  key: {{.Values.tls.passwordKey}}
+            - name: MAIL_PORT
+              value: "{{.Values.mail.port}}"
+            - name: MAIL_HOST
+              value: "{{.Values.mail.host}}"
+            - name: MAIL_USER
+              value: "{{.Values.mail.username}}"
+            - name: MAIL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.credSecret }}
+                  key: {{ .Values.mail.passwordKey }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repo }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            failureThreshold: 6
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            failureThreshold: 24
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              scheme: HTTPS
+              path: /StackV-web/portal/
+              port: 8443
+            failureThreshold: 9
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 60
+          name: {{.Release.Name}}-orchestrator
+          ports:
+            - containerPort: 8443
+              name: app-https
+              protocol: TCP
+            - containerPort: 8080
+              name: app-http
+              protocol: TCP
+            - containerPort: 9990
+              name: console-http
+              protocol: TCP
+            - containerPort: 9993
+              name: console-https
+              protocol: TCP
+            - containerPort: 8787
+              name: app-debug
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /opt/jboss/wildfly/standalone/configuration/tls
+              name: client-keystore
+      restartPolicy: Always
+      volumes:
+        - secret:
+            secretName: {{ .Values.tls.keystoreSecret }}
+          name: client-keystore
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

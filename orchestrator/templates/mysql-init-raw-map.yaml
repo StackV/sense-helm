@@ -1,0 +1,361 @@
+apiVersion: v1
+data:
+  a_preprocess.sql: |-
+    -- Database Creation
+    CREATE DATABASE IF NOT EXISTS `frontend`;
+    CREATE DATABASE IF NOT EXISTS `rainsdb`;
+  all_raw_dump.sql: "-- MySQL dump 10.13  Distrib 5.7.44, for Linux (x86_64)\n--\n--
+    Host: 127.0.0.1    Database: rainsdb\n-- ------------------------------------------------------\n--
+    Server version\t5.7.44\n\n/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT
+    */;\n/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;\n/*!40101
+    SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;\n/*!40101 SET NAMES utf8
+    */;\n/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;\n/*!40103 SET TIME_ZONE='+00:00'
+    */;\n/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;\n/*!40014
+    SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n/*!40101
+    SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n/*!40111 SET
+    @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;\n\n--\n-- Current Database: `rainsdb`\n--\n\nUSE
+    `rainsdb`;\n\n--\n-- Table structure for table `address_allocation`\n--\n\nDROP
+    TABLE IF EXISTS `address_allocation`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `address_allocation`
+    (\n  `id` bigint(20) NOT NULL AUTO_INCREMENT,\n  `address` varchar(255) DEFAULT
+    NULL,\n  `affiliate` varchar(255) DEFAULT NULL,\n  `expiry` datetime DEFAULT NULL,\n
+    \ `name` varchar(255) DEFAULT NULL,\n  `scope` varchar(255) DEFAULT NULL,\n  `pool_id`
+    bigint(20) DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  KEY `FKcrslvndsj23m3m4dot9ihel7k`
+    (`pool_id`)\n) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `address_pool`\n--\n\nDROP TABLE IF EXISTS `address_pool`;\n/*!40101 SET
+    @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `address_pool` (\n  `id` bigint(20) NOT NULL AUTO_INCREMENT,\n
+    \ `name` varchar(255) DEFAULT NULL,\n  `pool` varchar(255) DEFAULT NULL,\n  `type`
+    varchar(255) DEFAULT NULL,\n  PRIMARY KEY (`id`)\n) ENGINE=MyISAM AUTO_INCREMENT=4
+    DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `address_pool_acl`\n--\n\nDROP TABLE IF
+    EXISTS `address_pool_acl`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `address_pool_acl`
+    (\n  `id` bigint(20) NOT NULL AUTO_INCREMENT,\n  `level` varchar(255) DEFAULT
+    NULL,\n  `scope` varchar(255) DEFAULT NULL,\n  `username` varchar(255) DEFAULT
+    NULL,\n  `pool_id` bigint(20) NOT NULL,\n  PRIMARY KEY (`id`),\n  KEY `FKew63crse0bsw81ctw2ed8ppci`
+    (`pool_id`)\n) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `delta`\n--\n\nDROP TABLE IF EXISTS `delta`;\n/*!40101 SET @saved_cs_client
+    \    = @@character_set_client */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE
+    TABLE `delta` (\n  `DTYPE` varchar(31) NOT NULL,\n  `id` varchar(36) NOT NULL,\n
+    \ `orderInt` int(11) DEFAULT NULL,\n  `referenceUUID` varchar(255) DEFAULT NULL,\n
+    \ `status` varchar(255) DEFAULT NULL,\n  `modelAdditionId` varchar(255) DEFAULT
+    NULL,\n  `modelReductionId` varchar(255) DEFAULT NULL,\n  `serviceInstanceId`
+    bigint(20) DEFAULT NULL,\n  `systemDeltaIdForService` varchar(36) DEFAULT NULL,\n
+    \ `referenceVersionGroupId` bigint(20) DEFAULT NULL,\n  `serviceDeltaIdForSystem`
+    varchar(36) DEFAULT NULL,\n  `driverInstanceId` bigint(20) DEFAULT NULL,\n  `referenceVersionItemId`
+    bigint(20) DEFAULT NULL,\n  `systemDeltaId` varchar(36) DEFAULT NULL,\n  `driverInstance_id`
+    bigint(20) DEFAULT NULL,\n  `referenceVersionItem_id` bigint(20) DEFAULT NULL,\n
+    \ `systemDelta_id` varchar(36) DEFAULT NULL,\n  `systemInstanceId` bigint(20)
+    DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  KEY `FKkvymtuvtg87njx3i04c0ps280` (`driverInstanceId`),\n
+    \ KEY `FKfi8rutmvhw8on6mwh9dkm4pt` (`referenceVersionItemId`),\n  KEY `FK35p0b65eet3r2m59500mh9gu7`
+    (`systemDeltaId`),\n  KEY `FKkl7k50fl7ypj42wx3pxnsmgoc` (`modelAdditionId`),\n
+    \ KEY `FKhsmy801xxj493e9mfjeisju3d` (`modelReductionId`),\n  KEY `FKfxy191phyxa99a553g4p1n7nw`
+    (`driverInstance_id`),\n  KEY `FKkex1i5da0ad2d3tjyjo3qdkh8` (`referenceVersionItem_id`),\n
+    \ KEY `FKc58aqclffwg0tf3gtrh3p12u` (`systemDelta_id`),\n  KEY `FK46yudrgokg1h71thyorbbpl85`
+    (`serviceInstanceId`),\n  KEY `FKpfbi7a2yyp7r2x6dab8c23gwd` (`systemDeltaIdForService`),\n
+    \ KEY `FK4va5r4mnox7adh5bhe6smmt7a` (`referenceVersionGroupId`),\n  KEY `FK869b3ttojyb4xbdk5dbfc4owh`
+    (`serviceDeltaIdForSystem`),\n  KEY `FKoyednxp5hx2du7lasqe22y9l7` (`systemInstanceId`)\n)
+    ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `delta_driver_command`\n--\n\nDROP TABLE
+    IF EXISTS `delta_driver_command`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `delta_driver_command`
+    (\n  `systemDeltaId` varchar(36) NOT NULL,\n  `value` longtext,\n  `command` varchar(128)
+    NOT NULL,\n  PRIMARY KEY (`systemDeltaId`,`command`)\n) ENGINE=MyISAM DEFAULT
+    CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client */;\n\n--\n--
+    Table structure for table `driver_instance`\n--\n\nDROP TABLE IF EXISTS `driver_instance`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `driver_instance` (\n  `id` bigint(20) NOT NULL,\n  `driverEjbPath`
+    varchar(255) DEFAULT NULL,\n  `topologyUri` varchar(255) DEFAULT NULL,\n  PRIMARY
+    KEY (`id`),\n  UNIQUE KEY `UK_y467hjg6rm6ut6k20v8kpgd5` (`topologyUri`)\n) ENGINE=MyISAM
+    DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `driver_instance_property`\n--\n\nDROP
+    TABLE IF EXISTS `driver_instance_property`;\n/*!40101 SET @saved_cs_client     =
+    @@character_set_client */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE
+    TABLE `driver_instance_property` (\n  `driverInstanceId` bigint(20) NOT NULL,\n
+    \ `value` longtext,\n  `property` varchar(255) NOT NULL,\n  PRIMARY KEY (`driverInstanceId`,`property`)\n)
+    ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `driver_metadata`\n--\n\nDROP TABLE IF
+    EXISTS `driver_metadata`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `driver_metadata`
+    (\n  `id` bigint(20) NOT NULL AUTO_INCREMENT,\n  `creationTime` timestamp NOT
+    NULL DEFAULT CURRENT_TIMESTAMP,\n  `deltaUUID` varchar(255) DEFAULT NULL,\n  `instanceUUID`
+    varchar(255) DEFAULT NULL,\n  `metaKey` varchar(255) DEFAULT NULL,\n  `val` longtext,\n
+    \ PRIMARY KEY (`id`)\n) ENGINE=MyISAM AUTO_INCREMENT=532 DEFAULT CHARSET=latin1;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `event_ticket`\n--\n\nDROP TABLE IF EXISTS `event_ticket`;\n/*!40101 SET
+    @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `event_ticket` (\n  `event_ticket_id` int(11) NOT NULL
+    AUTO_INCREMENT,\n  `code` varchar(255) DEFAULT NULL,\n  `creation_time` timestamp
+    NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `message` varchar(255) DEFAULT NULL,\n
+    \ `open` tinyint(1) NOT NULL DEFAULT '1',\n  `priority` int(1) NOT NULL DEFAULT
+    '5',\n  `target` varchar(255) DEFAULT NULL,\n  PRIMARY KEY (`event_ticket_id`)\n)
+    ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `global_property`\n--\n\nDROP TABLE IF
+    EXISTS `global_property`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `global_property`
+    (\n  `id` bigint(20) NOT NULL,\n  `property` varchar(255) DEFAULT NULL,\n  `value`
+    varchar(255) DEFAULT NULL,\n  PRIMARY KEY (`id`)\n) ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `hibernate_sequence`\n--\n\nDROP TABLE IF EXISTS `hibernate_sequence`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `hibernate_sequence` (\n  `next_val` bigint(20) DEFAULT
+    NULL\n) ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `model`\n--\n\nDROP
+    TABLE IF EXISTS `model`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `model` (\n  `DTYPE`
+    varchar(31) NOT NULL,\n  `id` varchar(255) NOT NULL,\n  `committed` bit(1) NOT
+    NULL,\n  `creationTime` datetime DEFAULT NULL,\n  `cxtVersion` bigint(20) DEFAULT
+    NULL,\n  `cxtVersionTag` varchar(255) DEFAULT NULL,\n  `ttlModel` longtext,\n
+    \ `isAddition` bit(1) DEFAULT NULL,\n  `deltaId` varchar(36) DEFAULT NULL,\n  `driverInstanceId`
+    bigint(20) DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  KEY `FK1jc46n055tqrt3ejjsjncks0m`
+    (`deltaId`),\n  KEY `FKiacs1l8ge0umhutoyfjyar4h4` (`driverInstanceId`)\n) ENGINE=MyISAM
+    DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `sense_addon`\n--\n\nDROP TABLE IF EXISTS
+    `sense_addon`;\n/*!40101 SET @saved_cs_client     = @@character_set_client */;\n/*!40101
+    SET character_set_client = utf8 */;\nCREATE TABLE `sense_addon` (\n  `name` varchar(255)
+    NOT NULL,\n  `config` longtext,\n  `type` varchar(255) DEFAULT NULL,\n  PRIMARY
+    KEY (`name`)\n) ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `sense_metadata`\n--\n\nDROP
+    TABLE IF EXISTS `sense_metadata`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `sense_metadata`
+    (\n  `name` varchar(128) NOT NULL,\n  `data` longtext NOT NULL,\n  `owner` varchar(255)
+    NOT NULL,\n  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `edited`
+    timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY
+    KEY (`name`)\n) ENGINE=MyISAM DEFAULT CHARSET=utf8;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `sense_metadata_policy`\n--\n\nDROP
+    TABLE IF EXISTS `sense_metadata_policy`;\n/*!40101 SET @saved_cs_client     =
+    @@character_set_client */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE
+    TABLE `sense_metadata_policy` (\n  `id` bigint(20) NOT NULL,\n  `level` varchar(8)
+    DEFAULT NULL,\n  `metadataName` varchar(255) NOT NULL,\n  `name` varchar(255)
+    NOT NULL,\n  `path` varchar(255) NOT NULL,\n  `principal` varchar(255) NOT NULL,\n
+    \ `regex` varchar(255) DEFAULT NULL,\n  `type` varchar(16) NOT NULL,\n  PRIMARY
+    KEY (`id`)\n) ENGINE=MyISAM DEFAULT CHARSET=utf8;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `sense_task`\n--\n\nDROP
+    TABLE IF EXISTS `sense_task`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `sense_task` (\n
+    \ `id` bigint(20) NOT NULL,\n  `agent` varchar(255) DEFAULT NULL,\n  `archived`
+    bit(1) NOT NULL,\n  `config` longtext,\n  `created` datetime NOT NULL,\n  `expires`
+    datetime DEFAULT NULL,\n  `parent` varchar(255) DEFAULT NULL,\n  `status` varchar(255)
+    DEFAULT NULL,\n  `statusMessage` longtext CHARACTER SET utf8,\n  `statusTime`
+    datetime DEFAULT NULL,\n  `uuid` varchar(36) NOT NULL,\n  PRIMARY KEY (`id`),\n
+    \ UNIQUE KEY `UK_dn993aijet36ry9k57mh8eq7p` (`uuid`)\n) ENGINE=MyISAM DEFAULT
+    CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client */;\n\n--\n--
+    Table structure for table `service_instance`\n--\n\nDROP TABLE IF EXISTS `service_instance`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `service_instance` (\n  `id` bigint(20) NOT NULL,\n  `lastStatus`
+    varchar(255) DEFAULT NULL,\n  `referenceUUID` varchar(255) DEFAULT NULL,\n  `status`
+    varchar(255) DEFAULT NULL,\n  `superStatus` varchar(255) DEFAULT NULL,\n  `alias`
+    varchar(255) DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `UK_o87vti8k373bqkqntbvmhqt3g`
+    (`referenceUUID`)\n) ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `service_instance_delta`\n--\n\nDROP
+    TABLE IF EXISTS `service_instance_delta`;\n/*!40101 SET @saved_cs_client     =
+    @@character_set_client */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE
+    TABLE `service_instance_delta` (\n  `id` bigint(20) NOT NULL AUTO_INCREMENT,\n
+    \ `delta` longtext,\n  `deltaUUID` varchar(255) DEFAULT NULL,\n  `instanceUUID`
+    varchar(255) DEFAULT NULL,\n  `type` varchar(255) DEFAULT NULL,\n  PRIMARY KEY
+    (`id`)\n) ENGINE=MyISAM AUTO_INCREMENT=301 DEFAULT CHARSET=latin1;\n/*!40101 SET
+    character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for table
+    `service_instance_plugin`\n--\n\nDROP TABLE IF EXISTS `service_instance_plugin`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `service_instance_plugin` (\n  `instanceUUID` varchar(40)
+    NOT NULL,\n  `type` int(11) NOT NULL,\n  `value` longtext,\n  PRIMARY KEY (`instanceUUID`,`type`)\n)
+    ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `service_instance_property`\n--\n\nDROP
+    TABLE IF EXISTS `service_instance_property`;\n/*!40101 SET @saved_cs_client     =
+    @@character_set_client */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE
+    TABLE `service_instance_property` (\n  `serviceInstanceId` bigint(20) NOT NULL,\n
+    \ `value` longtext,\n  `property` varchar(255) NOT NULL,\n  PRIMARY KEY (`serviceInstanceId`,`property`)\n)
+    ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `service_instance_scaffold`\n--\n\nDROP
+    TABLE IF EXISTS `service_instance_scaffold`;\n/*!40101 SET @saved_cs_client     =
+    @@character_set_client */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE
+    TABLE `service_instance_scaffold` (\n  `instanceUUID` varchar(255) NOT NULL,\n
+    \ `addition` longtext,\n  `deltaUUID` varchar(255) DEFAULT NULL,\n  `reduction`
+    longtext,\n  PRIMARY KEY (`instanceUUID`)\n) ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `service_intent`\n--\n\nDROP TABLE IF EXISTS `service_intent`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `service_intent` (\n  `service_intent_id` varchar(255)
+    NOT NULL,\n  `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `json`
+    longtext NOT NULL,\n  `provisioned` tinyint(1) NOT NULL DEFAULT '0',\n  `serviceDeltaUUID`
+    varchar(255) DEFAULT NULL,\n  `serviceInstanceUUID` varchar(255) DEFAULT NULL,\n
+    \ PRIMARY KEY (`service_intent_id`)\n) ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `service_verification`\n--\n\nDROP TABLE IF EXISTS `service_verification`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `service_verification` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n
+    \ `activation_checked` bit(1) DEFAULT NULL,\n  `activation_unverified` longtext,\n
+    \ `addition_checked` bit(1) DEFAULT NULL,\n  `addition_unverified` longtext,\n
+    \ `addition_verified` longtext,\n  `current_run` int(11) NOT NULL,\n  `deactivation_checked`
+    bit(1) DEFAULT NULL,\n  `deactivation_unverified` longtext,\n  `delta_uuid` varchar(255)
+    DEFAULT NULL,\n  `enabled` bit(1) NOT NULL,\n  `instance_uuid` varchar(255) NOT
+    NULL,\n  `last_modified` datetime NOT NULL,\n  `reduction_checked` bit(1) DEFAULT
+    NULL,\n  `reduction_unverified` longtext,\n  `reduction_verified` longtext,\n
+    \ `result` varchar(255) DEFAULT NULL,\n  `started` datetime DEFAULT NULL,\n  `state`
+    varchar(255) NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `UK_qan68tow6efkkykbqdu1qdyli`
+    (`instance_uuid`)\n) ENGINE=MyISAM AUTO_INCREMENT=179 DEFAULT CHARSET=latin1;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `system_instance`\n--\n\nDROP TABLE IF EXISTS `system_instance`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `system_instance` (\n  `id` bigint(20) NOT NULL,\n  `referenceUUID`
+    varchar(255) DEFAULT NULL,\n  `systemDeltaId` varchar(36) DEFAULT NULL,\n  PRIMARY
+    KEY (`id`),\n  KEY `FK7u6mcv0abjwwijtwe3s3xo5bx` (`systemDeltaId`)\n) ENGINE=MyISAM
+    DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `version_group`\n--\n\nDROP TABLE IF EXISTS
+    `version_group`;\n/*!40101 SET @saved_cs_client     = @@character_set_client */;\n/*!40101
+    SET character_set_client = utf8 */;\nCREATE TABLE `version_group` (\n  `id` bigint(20)
+    NOT NULL,\n  `refUuid` varchar(255) DEFAULT NULL,\n  `status` varchar(255) DEFAULT
+    NULL,\n  `updateTime` datetime DEFAULT NULL,\n  PRIMARY KEY (`id`)\n) ENGINE=MyISAM
+    DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `version_group_item`\n--\n\nDROP TABLE
+    IF EXISTS `version_group_item`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `version_group_item`
+    (\n  `group_id` bigint(20) NOT NULL,\n  `item_id` bigint(20) NOT NULL,\n  KEY
+    `FKhovwiyc43k6yoprvogc7l4cvm` (`group_id`),\n  KEY `FKm2y8naj9ja6plrdtn8rxobkhi`
+    (`item_id`)\n) ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `version_item`\n--\n\nDROP
+    TABLE IF EXISTS `version_item`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `version_item`
+    (\n  `id` bigint(20) NOT NULL,\n  `referenceUUID` varchar(255) DEFAULT NULL,\n
+    \ `driverInstanceId` bigint(20) DEFAULT NULL,\n  `modelRefId` varchar(255) DEFAULT
+    NULL,\n  PRIMARY KEY (`id`),\n  KEY `FKgt1qbdqlby32ac7pl6m1lpiee` (`driverInstanceId`),\n
+    \ KEY `FKa961mlog1doh8xeuyb9oik7qx` (`modelRefId`)\n) ENGINE=MyISAM DEFAULT CHARSET=latin1;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Current Database: `frontend`\n--\n\nUSE
+    `frontend`;\n\n--\n-- Table structure for table `acl`\n--\n\nDROP TABLE IF EXISTS
+    `acl`;\n/*!40101 SET @saved_cs_client     = @@character_set_client */;\n/*!40101
+    SET character_set_client = utf8 */;\nCREATE TABLE `acl` (\n  `acl_id` int(11)
+    NOT NULL AUTO_INCREMENT,\n  `subject` varchar(45) COLLATE utf8_unicode_ci NOT
+    NULL,\n  `is_group` tinyint(1) NOT NULL DEFAULT '0',\n  `object` varchar(45) COLLATE
+    utf8_unicode_ci NOT NULL,\n  PRIMARY KEY (`acl_id`)\n) ENGINE=InnoDB AUTO_INCREMENT=217
+    DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `clipbook`\n--\n\nDROP
+    TABLE IF EXISTS `clipbook`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `clipbook` (\n
+    \ `clipbook_id` int(11) NOT NULL AUTO_INCREMENT,\n  `username` varchar(128) COLLATE
+    utf8_unicode_ci NOT NULL,\n  `name` varchar(256) COLLATE utf8_unicode_ci NOT NULL,\n
+    \ `clip` longtext COLLATE utf8_unicode_ci NOT NULL,\n  `color` varchar(25) COLLATE
+    utf8_unicode_ci DEFAULT NULL,\n  PRIMARY KEY (`clipbook_id`)\n) ENGINE=InnoDB
+    AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `driver`\n--\n\nDROP
+    TABLE IF EXISTS `driver`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `driver` (\n  `urn`
+    varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n  `type` varchar(64) COLLATE utf8_unicode_ci
+    NOT NULL,\n  `xml` longtext COLLATE utf8_unicode_ci NOT NULL,\n  PRIMARY KEY (`urn`),\n
+    \ UNIQUE KEY `urn` (`urn`),\n  KEY `urn_2` (`urn`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    COLLATE=utf8_unicode_ci;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `label`\n--\n\nDROP TABLE IF EXISTS `label`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `label` (\n  `identifier` varchar(255) COLLATE utf8_unicode_ci
+    NOT NULL,\n  `username` varchar(40) COLLATE utf8_unicode_ci NOT NULL,\n  `label`
+    varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n  `color` varchar(25) COLLATE
+    utf8_unicode_ci DEFAULT NULL,\n  PRIMARY KEY (`identifier`)\n) ENGINE=InnoDB DEFAULT
+    CHARSET=utf8 COLLATE=utf8_unicode_ci;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `log`\n--\n\nDROP TABLE IF EXISTS `log`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `log` (\n  `log_id` int(11) NOT NULL AUTO_INCREMENT,\n
+    \ `timestamp` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),\n  `level` varchar(10)
+    COLLATE utf8_unicode_ci NOT NULL,\n  `logger` varchar(100) COLLATE utf8_unicode_ci
+    NOT NULL,\n  `module` varchar(40) COLLATE utf8_unicode_ci NOT NULL,\n  `method`
+    varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,\n  `referenceUUID` varchar(40)
+    COLLATE utf8_unicode_ci DEFAULT NULL,\n  `targetID` varchar(100) COLLATE utf8_unicode_ci
+    DEFAULT NULL,\n  `event` varchar(100) COLLATE utf8_unicode_ci NOT NULL,\n  `message`
+    longtext COLLATE utf8_unicode_ci NOT NULL,\n  `severity` varchar(10) COLLATE utf8_unicode_ci
+    DEFAULT NULL,\n  `exception` longtext COLLATE utf8_unicode_ci,\n  PRIMARY KEY
+    (`log_id`),\n  KEY `i_time` (`timestamp`),\n  KEY `i_uuid` (`referenceUUID`),\n
+    \ FULLTEXT KEY `i_event` (`event`)\n) ENGINE=InnoDB AUTO_INCREMENT=1567642 DEFAULT
+    CHARSET=utf8 COLLATE=utf8_unicode_ci;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `log_archived`\n--\n\nDROP TABLE IF EXISTS
+    `log_archived`;\n/*!40101 SET @saved_cs_client     = @@character_set_client */;\n/*!40101
+    SET character_set_client = utf8 */;\nCREATE TABLE `log_archived` (\n  `log_id`
+    int(11) NOT NULL,\n  `timestamp` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+    ON UPDATE CURRENT_TIMESTAMP(3),\n  `level` varchar(10) COLLATE utf8_unicode_ci
+    NOT NULL,\n  `logger` varchar(100) COLLATE utf8_unicode_ci NOT NULL,\n  `module`
+    varchar(40) COLLATE utf8_unicode_ci NOT NULL,\n  `method` varchar(40) COLLATE
+    utf8_unicode_ci DEFAULT NULL,\n  `referenceUUID` varchar(40) COLLATE utf8_unicode_ci
+    DEFAULT NULL,\n  `targetID` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,\n
+    \ `event` varchar(100) COLLATE utf8_unicode_ci NOT NULL,\n  `message` longtext
+    COLLATE utf8_unicode_ci NOT NULL,\n  `severity` varchar(10) COLLATE utf8_unicode_ci
+    DEFAULT NULL,\n  `exception` longtext COLLATE utf8_unicode_ci,\n  PRIMARY KEY
+    (`log_id`),\n  KEY `time_index` (`timestamp`),\n  KEY `uuid_index` (`referenceUUID`)\n)
+    ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `service_delta`\n--\n\nDROP
+    TABLE IF EXISTS `service_delta`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `service_delta`
+    (\n  `service_delta_id` int(11) NOT NULL AUTO_INCREMENT,\n  `service_instance_id`
+    int(11) NOT NULL,\n  `super_state` varchar(11) COLLATE utf8_unicode_ci NOT NULL,\n
+    \ `type` varchar(60) COLLATE utf8_unicode_ci NOT NULL,\n  `referenceUUID` varchar(255)
+    COLLATE utf8_unicode_ci DEFAULT NULL,\n  `delta` longtext COLLATE utf8_unicode_ci
+    NOT NULL,\n  PRIMARY KEY (`service_delta_id`,`service_instance_id`,`super_state`),\n
+    \ KEY `service_delta-service_instance_idx` (`service_instance_id`),\n  KEY `service_delta-service_history_idx`
+    (`super_state`),\n  CONSTRAINT `service_delta-service_instance` FOREIGN KEY (`service_instance_id`)
+    REFERENCES `service_instance` (`service_instance_id`) ON DELETE CASCADE ON UPDATE
+    NO ACTION\n) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `service_instance`\n--\n\nDROP TABLE IF EXISTS `service_instance`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `service_instance` (\n  `service_instance_id` int(11)
+    NOT NULL AUTO_INCREMENT,\n  `type` varchar(45) COLLATE utf8_unicode_ci NOT NULL,\n
+    \ `username` varchar(45) COLLATE utf8_unicode_ci NOT NULL,\n  `creation_time`
+    timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `referenceUUID` varchar(255)
+    COLLATE utf8_unicode_ci NOT NULL,\n  `alias_name` varchar(255) COLLATE utf8_unicode_ci
+    NOT NULL,\n  `super_state` varchar(11) COLLATE utf8_unicode_ci DEFAULT NULL,\n
+    \ `last_state` varchar(11) COLLATE utf8_unicode_ci DEFAULT NULL,\n  `last_error`
+    longtext COLLATE utf8_unicode_ci,\n  `service_profile_id` varchar(36) COLLATE
+    utf8_unicode_ci DEFAULT NULL,\n  `archived` tinyint(1) NOT NULL DEFAULT '0',\n
+    \ `modifiable` tinyint(1) NOT NULL DEFAULT '0',\n  `locked` tinyint(1) NOT NULL
+    DEFAULT '0',\n  PRIMARY KEY (`service_instance_id`),\n  KEY `service_instance-service_idx`
+    (`type`),\n  KEY `service_instance-user_info_idx` (`username`),\n  KEY `service_instance-service_state_idx`
+    (`super_state`),\n  KEY `idx_service_instance_referenceUUID` (`referenceUUID`)\n)
+    ENGINE=InnoDB AUTO_INCREMENT=198 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `service_profile`\n--\n\nDROP TABLE IF EXISTS `service_profile`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `service_profile` (\n  `service_profile_id` varchar(36)
+    COLLATE utf8_unicode_ci NOT NULL,\n  `name` varchar(45) COLLATE utf8_unicode_ci
+    NOT NULL,\n  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,\n
+    \ `owner` varchar(45) COLLATE utf8_unicode_ci NOT NULL,\n  `json` longtext COLLATE
+    utf8_unicode_ci NOT NULL,\n  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n
+    \ `last_edited` timestamp NULL DEFAULT NULL,\n  `authorized` tinyint(1) NOT NULL
+    DEFAULT '0',\n  `editable` tinyint(1) NOT NULL DEFAULT '0',\n  `edit_json` longtext
+    COLLATE utf8_unicode_ci,\n  `folder` varchar(80) COLLATE utf8_unicode_ci DEFAULT
+    NULL,\n  PRIMARY KEY (`service_profile_id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    COLLATE=utf8_unicode_ci;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n\n--\n-- Table structure for table `service_profile_licenses`\n--\n\nDROP
+    TABLE IF EXISTS `service_profile_licenses`;\n/*!40101 SET @saved_cs_client     =
+    @@character_set_client */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE
+    TABLE `service_profile_licenses` (\n  `service_profile_id` varchar(36) COLLATE
+    utf8_unicode_ci NOT NULL,\n  `username` varchar(45) COLLATE utf8_unicode_ci NOT
+    NULL,\n  `type` varchar(25) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'ticket',\n
+    \ `remaining` int(5) NOT NULL DEFAULT '10',\n  PRIMARY KEY (`service_profile_id`,`username`),\n
+    \ CONSTRAINT `id` FOREIGN KEY (`service_profile_id`) REFERENCES `service_profile`
+    (`service_profile_id`) ON DELETE CASCADE ON UPDATE NO ACTION\n) ENGINE=InnoDB
+    DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;\n/*!40101 SET character_set_client
+    = @saved_cs_client */;\n\n--\n-- Table structure for table `service_renders`\n--\n\nDROP
+    TABLE IF EXISTS `service_renders`;\n/*!40101 SET @saved_cs_client     = @@character_set_client
+    */;\n/*!40101 SET character_set_client = utf8 */;\nCREATE TABLE `service_renders`
+    (\n  `id` varchar(8) COLLATE utf8_unicode_ci NOT NULL,\n  `manifest` mediumtext
+    COLLATE utf8_unicode_ci,\n  `package` mediumtext COLLATE utf8_unicode_ci,\n  PRIMARY
+    KEY (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;\n/*!40101
+    SET character_set_client = @saved_cs_client */;\n\n--\n-- Table structure for
+    table `service_scaffold`\n--\n\nDROP TABLE IF EXISTS `service_scaffold`;\n/*!40101
+    SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client
+    = utf8 */;\nCREATE TABLE `service_scaffold` (\n  `instanceUUID` varchar(255) COLLATE
+    utf8_unicode_ci NOT NULL,\n  `addition` longtext COLLATE utf8_unicode_ci,\n  `reduction`
+    longtext COLLATE utf8_unicode_ci,\n  `deltaUUID` varchar(45) COLLATE utf8_unicode_ci
+    DEFAULT NULL,\n  PRIMARY KEY (`instanceUUID`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    COLLATE=utf8_unicode_ci;\n/*!40101 SET character_set_client = @saved_cs_client
+    */;\n/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;\n\n/*!40101 SET SQL_MODE=@OLD_SQL_MODE
+    */;\n/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;\n/*!40014 SET
+    UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;\n/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT
+    */;\n/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;\n/*!40101
+    SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;\n/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES
+    */;\n\n-- Dump completed on 2025-02-20 19:37:59"
+kind: ConfigMap
+metadata:
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    stackv/service: orchestrator
+  name: {{ .Release.Name }}-mysql-init-raw

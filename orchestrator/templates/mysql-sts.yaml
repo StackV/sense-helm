@@ -1,0 +1,91 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    stackv/service: orchestrator
+  name: {{.Release.Name}}-mysql
+spec:
+  selector:
+    matchLabels:
+      stackv/service: orchestrator
+      app.kubernetes.io/name: {{.Release.Name}}-mysql
+  serviceName: {{.Release.Name}}-mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        stackv/service: orchestrator
+        app.kubernetes.io/name: {{.Release.Name}}-mysql
+      name: {{.Release.Name}}-mysql
+    spec:
+      containers:
+        - name: {{.Release.Name}}-mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{.Values.global.credSecret | default (printf "%s-cred" .Release.Name)}}
+                  key: {{.Values.mysql.passwordKey}}
+          image: mysql:5.7
+          args:
+            - "--ignore-db-dir=lost+found"
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command: ["mysqladmin", "ping"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command: 
+                - "bash" 
+                - "-c"
+                - "mysql -h 127.0.0.1 --password=${MYSQL_ROOT_PASSWORD} -e \"SELECT 1\""
+            initialDelaySeconds: 5
+            periodSeconds: 2
+            timeoutSeconds: 1
+          name: {{.Release.Name}}-mysql
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          {{- with .Values.mysql.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-data
+            - mountPath: /docker-entrypoint-initdb.d/
+              name: mysql-init
+            - mountPath: /etc/mysql/conf.d/
+              name: mysql-config
+      restartPolicy: Always
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: {{.Values.mysql.pvcName | default (printf "%s-mysql-pvc" .Release.Name) }}
+        - configMap:
+            name: {{.Release.Name}}-mysql-config
+          name: mysql-config
+        - configMap:
+            {{- if eq .Values.global.mode "test" }}
+            name: {{.Release.Name}}-mysql-init-dump
+            {{- else }}
+            name: {{.Release.Name}}-mysql-init-raw
+            {{- end }}
+          name: mysql-init
+      {{- with .Values.mysql.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mysql.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mysql.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
