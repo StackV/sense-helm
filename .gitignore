@@ -7,4 +7,5 @@ override-*.yaml
 # update-pipelines.sh
 test.yaml
 
+index.yaml
 .cr-release-packages
