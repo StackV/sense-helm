@@ -1,0 +1,67 @@
+### SENSE Keycloak Configuration
+###
+
+## @section Global Parameters
+##
+#
+global:
+  ## @param global.domain The host domain. Can be used for the Ingress hostname such as `keycloak.{{ .Values.global.domain }}`
+  domain: example.es.net
+  #
+  secret:
+    ## @param global.secret.name Secret for the Keycloak credentials.
+    name: keycloak-cred
+    ## @param global.secret.passwordKey Secret key for the Keycloak admin password.
+    passwordKey: admin-password
+
+## @section Common Parameters
+##
+#
+## @param namespaceOverride Override for the Helm namespace.
+namespaceOverride:
+
+## @section Custom Ingress Parameters
+##
+#
+ingress:
+  ## @param ingress.enabled Whether to enable the custom Ingress resource.
+  enabled: true
+  ## @param ingress.className The Ingress class.
+  className: traefik
+  ## @param ingress.annotations A dict of additional annotations, such as cert-manager Issuers.
+  annotations: {}
+  ## @param ingress.hostname The hostname for the main and unfiltered admin endpoint. Can be templated.
+  hostname: keycloak.{{ .Values.global.domain }}
+  ## @param ingress.authHostname The hostname for the limited auth endpoint, used by the Orchestrator. Can be templated.
+  authHostname: auth.{{ .Values.global.domain }}
+  ## @param ingress.tlsSecret Secret for the TLS credentials. Can be templated.
+  tlsSecret: "{{ .Release.Name }}-tls-keycloak"
+
+##
+## PATCH CONFIGS FOR LEGACY COMPATABILITY.
+## The below values should not be edited carelessly.
+##
+## For more information on the underlying chart, see https://artifacthub.io/packages/helm/bitnami/keycloak/9.8.1.
+##
+## @skip keycloak Keycloak subchart variables.
+keycloak:
+  image:
+    repository: virnao/sense-keycloak
+    tag: 18
+    pullPolicy: Always
+  readinessProbe:
+    enabled: false
+  auth:
+    adminUser: admin
+  extraEnvVars:
+    - name: PROXY_ADDRESS_FORWARDING
+      value: "true"
+    - name: KEYCLOAK_IMPORT
+      value: /opt/jboss/realm-export.json
+    - name: KEYCLOAK_USER
+      value: admin
+    - name: KEYCLOAK_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.global.secret.name }}"
+          key: "{{ .Values.global.secret.passwordKey }}"

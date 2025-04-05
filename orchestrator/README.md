@@ -6,7 +6,7 @@ This chart installs the SENSE Orchestrator on a K8s cluster, alongside an embedd
 
 ## Configuration
 
-In most cases you should be fine reviewing the variables established below from the full `values.yaml`. You can copy or template the `override.template.yaml` file as a base, or create your own override by copying from `values.yaml`. Either way, you should create a `override.yaml`, and configure (at a minimum) the two domain variables: `global.domain` and `global.keycloak` variables.
+In most cases you should be fine reviewing the variables established below from the full `values.yaml` and copying or templating the `override.template.yaml` file as a base. You can also create your own override by copying from `values.yaml`. Either way, you should create a `override.yaml`, and configure (at a minimum) the two domain variables: `global.domain` and `global.keycloak` variables.
 
 Depending on your cluster you will likely need to adjust the persistence variables under `mysql`, as well as the configuration of the Ingress and any TLS credentials.
 
@@ -19,7 +19,7 @@ The orchestrator relies on a set of two secrets that will need to be present bef
 
 ## Installation
 
-After creating the required secrets and configuring your override, run `helm install senseo . -f values.yaml -f override.yaml`.
+After creating the required secrets and configuring your override, run `helm install senseo . [-f values.yaml] -f override.yaml`.
 
 ## Usage
 

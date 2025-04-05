@@ -1,0 +1,13 @@
+global:
+  domain: sense-2.es.net
+  secret:
+    name: kc-cred-secret
+
+namespaceOverride: sense
+
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: le-stackv-cluster
+  hostname: kc-admin.{{ .Values.global.domain }}
+  authHostname: kc-auth.{{ .Values.global.domain }}
+  tlsSecret: existing-tls-secret

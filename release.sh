@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# Set a github `token` within the default config file at $HOME/.cr.yaml
+# Example Conf:
+# token: GITHUB_TOKEN
+# owner: StackV
+# git-repo: sense-helm
+
 cr package orchestrator
 cr upload --packages-with-index --push --skip-existing --config $HOME/.cr.yaml
 cr index --packages-with-index --index-path . --push --config $HOME/.cr.yaml

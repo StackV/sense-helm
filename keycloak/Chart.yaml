@@ -1,16 +1,19 @@
 apiVersion: v2
-description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web portal package).
-keywords:
-  - orchestrator
-name: sense-orchestrator
+name: sense-keycloak
+description: Keycloak Pre-configured for the SENSE Orchestrator
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 1.9.2
+version: 0.6.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "r25-dev"
+appVersion: "18.0.2"
+
+dependencies:
+  - name: keycloak
+    version: 9.8.1
+    repository: https://charts.bitnami.com/bitnami

@@ -20,9 +20,9 @@ global:
 #
 image:
   ## @param image.repo Orchestrator image.
-  repo: virnao/stackv-orchestrator
+  repo: virnao/sense-orchestrator
   ## @param image.tag Image tag to pull.
-  tag: latest
+  tag:
   ## @param image.pullSecrets Secrets for any private docker registry access.
   pullSecrets: []
 #
