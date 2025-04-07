@@ -26,7 +26,7 @@ spec:
         paths:
           - backend:
               service:
-                name: {{ .Release.Name }}-keycloak
+                name: {{ template "keycloak.fullname" . }}
                 port:
                   name: http
             path: /
@@ -37,21 +37,21 @@ spec:
         paths:
           - backend:
               service:
-                name: {{ .Release.Name }}-keycloak
+                name: {{ template "keycloak.fullname" . }}
                 port:
                   name: http
             path: /auth/realms/StackV/
             pathType: Prefix
           - backend:
               service:
-                name: {{ .Release.Name }}-keycloak
+                name: {{ template "keycloak.fullname" . }}
                 port:
                   name: http
             path: /auth/admin/realms/StackV/
             pathType: Prefix
           - backend:
               service:
-                name: {{ .Release.Name }}-keycloak
+                name: {{ template "keycloak.fullname" . }}
                 port:
                   name: http
             path: /auth/resources/
