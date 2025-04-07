@@ -1,4 +1,3 @@
-> **ALPHA** This chart is a work in progress, and is not guaranteed to be turn-key for every cluster configuration. I am not a K8s specialist so there is likely lots to improve, and any feedback about optimization or best-practices are certainly welcome.
 
 # SENSE Keycloak
 
