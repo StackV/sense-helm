@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's pre-configured Keycloak Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 0.6.3
+
+Patch fix for bitnami service naming truncation.
+
 ## 0.6.2
 
 Better templating for Bitnami config patch.
