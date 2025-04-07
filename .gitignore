@@ -7,7 +7,7 @@ override-*.yaml
 # update-pipelines.sh
 test.yaml
 
-**/charts/*.tgz
+**/charts/*
 
 index.yaml
 .cr-release-packages
