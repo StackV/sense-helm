@@ -74,5 +74,5 @@ helm -n sense install local-sense-orchestrator sense-helm/sense-orchestrator --v
 
 5. Assuming everything was provisioned correctly, we should be able to access our services after a couple minutes of initialization time.
 
-- The Keycloak administration console should be available at `https://kc.sense-o.es.net/auth/admin/`, and we can login with the username `admin` and password equal to whatever we set the `admin-password` key to in Step 2. From here we will likely go to the Users tab and add a new user using the button at the top right.
-- The Orchestrator should be available at `https://orch.dev3.virnao.com/StackV-web/portal`.
+- The Keycloak administration console should be available at `https://kc.sense-o.es.net/auth/admin/`, and we can login with the username `admin` and password equal to whatever we set the `admin-password` key to in Step 2. From here go to the Users tab and add a new user using the button at the top right. After this new user is created, we'll click into it, head to the Role Mappings tab, and add the `A_Admin` role to create our new admin user. Once we hit Save we'll have made our first real user.
+- Once the Orchestrator is online it should now be available at `https://orch.dev3.virnao.com/StackV-web/portal`. Accessing it should prompt you with a login, where we can use our new user credentials.
