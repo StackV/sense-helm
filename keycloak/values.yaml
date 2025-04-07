@@ -53,6 +53,8 @@ keycloak:
     enabled: false
   auth:
     adminUser: admin
+  service:
+    type: ClusterIP
   extraEnvVars:
     - name: PROXY_ADDRESS_FORWARDING
       value: "true"
