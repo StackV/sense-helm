@@ -15,6 +15,7 @@ global:
   keycloak: auth.sense.es.net
   ## @param global.credSecret Secret name for the chart's basic credentials.
   credSecret: sense-cred
+
 ## @section Orchestrator Parameters
 ##
 #
@@ -37,6 +38,18 @@ ingress:
   annotations:
   ## @param ingress.tlsSecret TLS secret name for ingress termination.
   tlsSecret: tls-stackv-orchestrator
+#
+issuer:
+  ## @param issuer.enabled Whether to enable the integrated cert-manager Issuer.
+  enabled: true
+  ## @param issuer.name Name of the Issuer.
+  name: le-sense-issuer
+  ## @param issuer.email Email metadata for the Issuer.
+  email: example@gmail.com
+  ## @param issuer.server Issuing server.
+  server: https://acme-v02.api.letsencrypt.org/directory
+  ## @param issuer.solvers Override for the Issuer solvers.
+  solvers: []
 #
 resources:
   #
@@ -71,18 +84,37 @@ service:
       consoleHttps: 9993
       ## @param service.ports.debug.debugger Wildfly debug port.
       debugger: 8787
-## @param nodeSelector Orchestrator nodeSelector block.
-nodeSelector: {}
-## @param tolerations Orchestrator tolerations block.
-tolerations: []
-## @param affinity Orchestrator affinity block.
-affinity: {}
 #
 tls:
   ## @param tls.passwordKey Key of the password for the orchestrator keystore files, found in `.global.credSecret`.
   passwordKey: tls-password
   ## @param tls.keystoreSecret Name of Kubernetes secret for the orchestrator keystore files. If unset, will automatically create the secret and set default keystores.
   keystoreSecret: sense-keystores
+#
+probes:
+  startup:
+    ## @param probes.startup.enabled Whether to enable the default Orchestrator startup probe.
+    enabled: true
+    ## @param probes.startup.custom A custom override for the Orchestrator startup probe.
+    custom: {}
+  liveness:
+    ## @param probes.liveness.enabled Whether to enable the default Orchestrator liveness probe.
+    enabled: true
+    ## @param probes.liveness.custom A custom override for the Orchestrator liveness probe.
+    custom: {}
+  readiness:
+    ## @param probes.readiness.enabled Whether to enable the default Orchestrator readiness probe.
+    enabled: true
+    ## @param probes.readiness.custom A custom override for the Orchestrator readiness probe.
+    custom: {}
+#
+## @param nodeSelector Orchestrator nodeSelector block.
+nodeSelector: {}
+## @param tolerations Orchestrator tolerations block.
+tolerations: []
+## @param affinity Orchestrator affinity block.
+affinity: {}
+
 ## @section MySQL Parameters
 ## Configuration for the built-in mysql server.
 #
@@ -109,12 +141,29 @@ mysql:
       cpu: 1000m
       ## @param mysql.resources.limits.memory MySQL memory limit.
       memory: 4Gi
+  probes:
+    startup:
+      ## @param mysql.probes.startup.enabled Whether to enable the default MySQL startup probe.
+      enabled: true
+      ## @param mysql.probes.startup.custom A custom override for the MySQL startup probe.
+      custom: {}
+    liveness:
+      ## @param mysql.probes.liveness.enabled Whether to enable the default MySQL liveness probe.
+      enabled: true
+      ## @param mysql.probes.liveness.custom A custom override for the MySQL liveness probe.
+      custom: {}
+    readiness:
+      ## @param mysql.probes.readiness.enabled Whether to enable the default MySQL readiness probe.
+      enabled: true
+      ## @param mysql.probes.readiness.custom A custom override for the MySQL readiness probe.
+      custom: {}
   ## @param mysql.nodeSelector MySQL nodeSelector block.
   nodeSelector: {}
   ## @param mysql.tolerations MySQL tolerations block.
   tolerations: []
   ## @param mysql.affinity MySQL affinity block.
   affinity: {}
+
 ## @section SMTP Parameters
 ## Configuration for the pilot Wildfly built-in mail system. Currently experimental.
 #

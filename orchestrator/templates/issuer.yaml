@@ -1,0 +1,23 @@
+{{- if .Values.issuer.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  namespace: {{ include "common.namespace" . | quote }}
+  name: {{ .Values.issuer.name }}
+spec:
+  acme:
+    email: {{ .Values.issuer.email }}
+    preferredChain: ""
+    privateKeySecretRef:
+      name: issuer-account-key
+    server: {{ .Values.issuer.server }}
+    solvers:
+    {{- if .Values.issuer.solvers }}
+        {{- include "common.render" (dict "value" .Values.issuer.solvers "context" $) | nindent 8 }}
+    {{- else }}
+        - http01:
+            ingress:
+                class: traefik
+    {{- end }}
+{{- end }}

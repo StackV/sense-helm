@@ -3,7 +3,7 @@ data:
   all_dump.sql: ""
 kind: ConfigMap
 metadata:
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ include "common.namespace" . | quote }}
   labels:
     stackv/service: mysql
     stackv/stack: app

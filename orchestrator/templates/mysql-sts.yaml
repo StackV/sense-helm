@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ include "common.namespace" . | quote }}
   labels:
     stackv/service: orchestrator
   name: {{.Release.Name}}-mysql
@@ -32,12 +32,20 @@ spec:
           args:
             - "--ignore-db-dir=lost+found"
           imagePullPolicy: Always
+          {{- if .Values.mysql.probes.startup.custom }}
+          startupProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.startup.custom "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.mysql.probes.liveness.enabled }}
           livenessProbe:
             exec:
               command: ["mysqladmin", "ping"]
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
+          {{- else if .Values.mysql.probes.liveness.custom }}
+          livenessProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.liveness.custom "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.mysql.probes.readiness.enabled }}
           readinessProbe:
             exec:
               command: 
@@ -47,6 +55,9 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 2
             timeoutSeconds: 1
+          {{- else if .Values.mysql.probes.readiness.custom }}
+          readinessProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.readiness.custom "context" $) | nindent 12 }}
+          {{- end }}        
           name: {{.Release.Name}}-mysql
           ports:
             - containerPort: 3306
@@ -66,7 +77,7 @@ spec:
       volumes:
         - name: mysql-data
           persistentVolumeClaim:
-            claimName: {{.Values.mysql.pvcName | default (printf "%s-mysql-pvc" .Release.Name) }}
+            claimName: {{ default (printf "%s-mysql-pvc" .Release.Name) .Values.mysql.pvcName }}
         - configMap:
             name: {{.Release.Name}}-mysql-config
           name: mysql-config
@@ -77,15 +88,12 @@ spec:
             name: {{.Release.Name}}-mysql-init-raw
             {{- end }}
           name: mysql-init
-      {{- with .Values.mysql.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
+      {{- if .Values.mysql.affinity }}
+      affinity: {{- include "common.render" ( dict "value" .Values.mysql.affinity "context" $) | nindent 8 }}
       {{- end }}
-      {{- with .Values.mysql.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
+      {{- if .Values.mysql.nodeSelector }}
+      nodeSelector: {{- include "common.render" ( dict "value" .Values.mysql.nodeSelector "context" $) | nindent 8 }}
       {{- end }}
-      {{- with .Values.mysql.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
+      {{- if .Values.mysql.tolerations }}
+      tolerations: {{- include "common.render" (dict "value" .Values.mysql.tolerations "context" .) | nindent 8 }}
       {{- end }}
