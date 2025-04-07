@@ -5,6 +5,7 @@ cred.yml
 cred.yaml
 override-*.yaml
 # update-pipelines.sh
+/test/
 test.yaml
 
 **/charts/*

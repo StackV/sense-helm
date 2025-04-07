@@ -91,8 +91,8 @@ mysql:
   passwordKey: mysql-password
   ## @param mysql.generatePVC If set to true, will generate a dynamic PVC. If set to false, pvcName should almost always be set.
   generatePVC: true
-  ## @param mysql.pvcName PVC name.
-  pvcName: mysql-pvc
+  ## @param mysql.pvcName Override for the PVC name.
+  pvcName:
   ## @param mysql.pvcClass PVC class for the mysql persistence.
   pvcClass: local-path
   #
