@@ -6,9 +6,8 @@ metadata:
   namespace: {{ include "common.namespace" . | quote }}
   annotations:
     helm.sh/resource-policy: "keep"
-  labels:
-    stackv/service: mysql
-    stackv/stack: app
+  labels: {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mysql
   name: {{ default (printf "%s-mysql-pvc" .Release.Name) .Values.mysql.pvcName }}
 spec:
   accessModes:

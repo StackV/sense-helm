@@ -1,15 +1,38 @@
 {{- define "common.render" -}}
-    {{- if typeIs "string" .value }}
-        {{- tpl .value .context }}
-    {{- else }}
-        {{- tpl (.value | toYaml) .context }}
-    {{- end }}
+{{- if typeIs "string" .value }}
+{{- tpl .value .context }}
+{{- else }}
+{{- tpl (.value | toYaml) .context }}
+{{- end }}
 {{- end -}}
 
 {{- define "common.namespace" -}}
-    {{- if .Values.global.namespace -}}
-        {{- .Values.global.namespace -}}
-    {{- else -}}
-        {{- .Release.Namespace -}}
-    {{- end -}}
+{{- if .Values.global.namespace -}}
+{{- .Values.global.namespace -}}
+{{- else -}}
+{{- .Release.Namespace -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "common.name" -}}
+{{- default .Chart.Name .Values.global.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "common.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "common.labels" -}}
+app.kubernetes.io/name: {{ include "common.name" . }}
+helm.sh/chart: {{ include "common.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Labels to use on deploy.spec.selector.matchLabels and svc.spec.selector
+*/}}
+{{- define "common.labels.match" -}}
+app.kubernetes.io/name: {{ include "common.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}

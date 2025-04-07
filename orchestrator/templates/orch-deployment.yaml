@@ -3,26 +3,23 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: {{ include "common.namespace" . | quote }}
-  labels:
-    stackv/service: orchestrator
-    app.kubernetes.io/name: {{.Release.Name}}-orchestrator
+  labels: {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/component: orchestrator
   name: {{.Release.Name}}-orch
 spec:
   replicas: 1
   revisionHistoryLimit: 3
   minReadySeconds: 10
   selector:
-    matchLabels:
-      stackv/service: orchestrator
-      app.kubernetes.io/name: {{.Release.Name}}-orchestrator
+    matchLabels: {{ include "common.labels.match" . | nindent 6 }}
+      app.kubernetes.io/component: orchestrator
   template:
     metadata:
       annotations:
         stackv/tag: {{ .Values.image.tag | default .Chart.AppVersion }}
         link.argocd.argoproj.io/external-link: https://{{ .Values.ingress.hostname | default .Values.global.domain }}/StackV-web/portal/
-      labels:
-        stackv/service: orchestrator
-        app.kubernetes.io/name: {{ .Release.Name }}-orchestrator
+      labels: {{- include "common.labels" . | nindent 8 }}
+        app.kubernetes.io/component: orchestrator
       name: {{ .Release.Name }}-orch
     spec:
       {{- with .Values.image.pullSecrets }}

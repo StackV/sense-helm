@@ -356,6 +356,6 @@ data:
 kind: ConfigMap
 metadata:
   namespace: {{ include "common.namespace" . | quote }}
-  labels:
-    stackv/service: orchestrator
+  labels: {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mysql
   name: {{ .Release.Name }}-mysql-init-raw

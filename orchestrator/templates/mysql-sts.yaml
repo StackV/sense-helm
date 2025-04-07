@@ -3,21 +3,19 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   namespace: {{ include "common.namespace" . | quote }}
-  labels:
-    stackv/service: orchestrator
+  labels: {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mysql
   name: {{.Release.Name}}-mysql
 spec:
   selector:
-    matchLabels:
-      stackv/service: orchestrator
-      app.kubernetes.io/name: {{.Release.Name}}-mysql
+    matchLabels: {{ include "common.labels.match" . | nindent 6 }}
+      app.kubernetes.io/component: mysql
   serviceName: {{.Release.Name}}-mysql
   replicas: 1
   template:
     metadata:
-      labels:
-        stackv/service: orchestrator
-        app.kubernetes.io/name: {{.Release.Name}}-mysql
+      labels: {{- include "common.labels" . | nindent 8 }}
+        app.kubernetes.io/component: mysql
       name: {{.Release.Name}}-mysql
     spec:
       containers:

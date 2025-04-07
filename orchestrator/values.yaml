@@ -41,7 +41,7 @@ ingress:
 #
 issuer:
   ## @param issuer.enabled Whether to enable the integrated cert-manager Issuer.
-  enabled: true
+  enabled: false
   ## @param issuer.name Name of the Issuer.
   name: le-sense-issuer
   ## @param issuer.email Email metadata for the Issuer.

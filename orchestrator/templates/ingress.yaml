@@ -8,8 +8,8 @@ metadata:
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  labels:
-    stackv/service: orchestrator
+  labels: {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/component: orchestrator
   name: {{.Release.Name}}-ingress
 spec:
   ingressClassName: {{.Values.ingress.className}}
