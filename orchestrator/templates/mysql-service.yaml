@@ -12,7 +12,6 @@ spec:
       port: 3306
       protocol: TCP
       targetPort: 3306
-  selector:
-    stackv/service: orchestrator
-    app.kubernetes.io/name: {{.Release.Name}}-mysql
+  selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mysql
   type: ClusterIP

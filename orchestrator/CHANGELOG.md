@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.9.6
+
+Fix service bug with selectors.
+
 ## 1.9.5
 
 Add more appropriate defaulting, as well as common labels.
