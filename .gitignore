@@ -7,4 +7,6 @@ override-*.yaml
 # update-pipelines.sh
 test.yaml
 
+**/charts/*
 .cr-release-packages
+.DS_Store
