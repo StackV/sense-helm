@@ -2,7 +2,6 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "keycloak.fullname" . }}
   namespace: {{ include "common.names.namespace" . | quote }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
     app.kubernetes.io/component: keycloak
@@ -16,6 +15,10 @@ metadata:
     {{- if .Values.ingress.annotations }}
     {{- include "common.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
     {{- end }}
+    {{- if .Values.issuer.enabled }}
+    cert-manager.io/issuer: {{ default (printf "%s-issuer" .Release.Name) .Values.issuer.name  }}
+    {{- end }}
+  name: {{ .Release.Name }}-ingress
 spec:
   {{- if and .Values.ingress.className (eq "true" (include "common.ingress.supportsIngressClassname" .)) }}
   ingressClassName: {{ .Values.ingress.className | quote }}
