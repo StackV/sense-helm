@@ -20,13 +20,12 @@ spec:
       name: {{ $mysqlName }}
     spec:
       containers:
-        - name: {{ $mysqlName }}
-          env:
+        - env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{.Values.global.credSecret | default (printf "%s-cred" .Release.Name)}}
-                  key: {{.Values.mysql.passwordKey}}
+                  name: {{ .Values.global.credSecret }}
+                  key: {{ .Values.mysql.passwordKey }}
           image: mysql:5.7
           args:
             - "--ignore-db-dir=lost+found"
@@ -57,7 +56,7 @@ spec:
           {{- else if .Values.mysql.probes.readiness.custom }}
           readinessProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.readiness.custom "context" $) | nindent 12 }}
           {{- end }}        
-          name: {{.Release.Name}}-mysql
+          name: {{ $mysqlName }}
           ports:
             - containerPort: 3306
               protocol: TCP
@@ -76,12 +75,12 @@ spec:
       volumes:
         - name: mysql-data
           persistentVolumeClaim:
-            claimName: {{ default (printf "%s-mysql-pvc" .Release.Name) .Values.mysql.pvcName }}
+            claimName: {{ default (printf "%s-mysql-pvc" (include "common.name" .)) .Values.mysql.pvcName }}
         - configMap:
-            name: {{.Release.Name}}-mysql-config
+            name: {{ printf "%s-mysql-config" (include "common.name" .) }}
           name: mysql-config
         - configMap:
-            name: {{.Release.Name}}-mysql-init-raw
+            name: {{ printf "%s-mysql-init-raw" (include "common.name" .) }}
           name: mysql-init
       {{- if .Values.mysql.affinity }}
       affinity: {{- include "common.render" ( dict "value" .Values.mysql.affinity "context" $) | nindent 8 }}
