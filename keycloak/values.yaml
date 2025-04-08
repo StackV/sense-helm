@@ -19,8 +19,6 @@ global:
 #
 ## @param namespaceOverride Override for the Helm namespace.
 namespaceOverride:
-## @param nameOverride Partial override for underlying resources.
-nameOverride: sense-kc
 
 ## @section Custom Ingress Parameters
 ##
@@ -59,6 +57,7 @@ issuer:
 ##
 ## @skip keycloak Keycloak subchart variables.
 keycloak:
+  nameOverride: sense-kc
   image:
     repository: virnao/sense-keycloak
     tag: 18
