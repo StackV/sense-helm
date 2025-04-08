@@ -34,6 +34,7 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 
 | Name                | Description                                                                                       | Value                 |
 | ------------------- | ------------------------------------------------------------------------------------------------- | --------------------- |
+| `global.nameSuffix` | A name to append to the Release Name.                                                             | `sense`               |
 | `global.namespace`  | The target namespace.                                                                             | `sense`               |
 | `global.mode`       | If set to 'test', enables CD test server behavior (seed/reset SQL DB with integration test data). | `prod`                |
 | `global.domain`     | The host domain for the orchestrator.                                                             | `stackv.sense.es.net` |
@@ -53,7 +54,7 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 | `ingress.annotations`              | Ingress annotations.                                                                                                                     | `nil`                                            |
 | `ingress.tlsSecret`                | TLS secret name for ingress termination.                                                                                                 | `tls-stackv-orchestrator`                        |
 | `issuer.enabled`                   | Whether to enable the integrated cert-manager Issuer.                                                                                    | `false`                                          |
-| `issuer.name`                      | Name of the Issuer.                                                                                                                      | `le-sense-issuer`                                |
+| `issuer.name`                      | Overrride for the Issuer name.                                                                                                           | `nil`                                            |
 | `issuer.email`                     | Email metadata for the Issuer.                                                                                                           | `example@gmail.com`                              |
 | `issuer.server`                    | Issuing server.                                                                                                                          | `https://acme-v02.api.letsencrypt.org/directory` |
 | `issuer.solvers`                   | Override for the Issuer solvers.                                                                                                         | `[]`                                             |
