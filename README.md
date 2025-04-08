@@ -8,7 +8,7 @@ The SENSE-O deployment is container based and both Docker Stack or Kubernetes ca
 
 As a practical example of how to use these charts, let's assume the following:
 
-> This tutorial was written at 2025-04-05, using chart versions OC:1.9.3 and KC:0.6.3 .
+> This tutorial was written on 2025-04-05, using chart versions OC:1.9.3 and KC:0.6.3 .
 
 - We are deploying to a cluster with a storage provisioner and ingress controller set up, as well as a cert-manager `ClusterIssuer` named `le-sense-cluster`.
 - We are deploying both the Orchestrator and Keycloak to the same cluster, within the `sense` namespace.
@@ -25,7 +25,7 @@ helm repo update
 
    - For Keycloak we need to set the initial admin password: `kubectl -n sense create secret generic sense-kc-cred --from-literal=admin-password='{REPLACE_ME}'`.
    - For the orchestrator install we need to establish a set of passwords for various components (DB access, Client TLS, SMTP): `kubectl -n sense create secret generic sense-orch-cred --from-literal=tls-password='{REPLACE_ME}' --from-literal=mysql-password='{REPlACE_ME}' --from-literal=mail-password='nomail'`
-   - For the orchestrator to connect to secure RMs, we'll need to provide a keystore file as well: `kubectl -n sense create secret generic sense-client-keystore --from-file={REPLACE_ME}/client.keystore`
+   - For the orchestrator to connect to provider API or standalone RMs, we'll also need a client keystore file: `kubectl -n sense create secret generic sense-client-keystore --from-file={REPLACE_ME}/client.keystore`
 
 3. With those secrets in place, we can now configure our local value files. To do this we'll create two files, `keycloak.values.yaml` and `orchestrator.values.yaml`. For more information about the options available, please see the individual chart directories. Make sure to adjust the following if you change the names of any secrets above.
 
@@ -71,8 +71,10 @@ helm -n sense install local-sense-keycloak sense-helm/sense-keycloak --version 0
 ```
 helm -n sense install local-sense-orchestrator sense-helm/sense-orchestrator --version 1.9.3 -f orchestrator.values.yaml
 ```
+* Note that sense-keycloak and sense-orchestrator can be deployed separately, meaning that one can only deploy the sense-orchestrator and point it to a previously deployed or shared sense-keycloak server.
+
 
 5. Assuming everything was provisioned correctly, we should be able to access our services after a couple minutes of initialization time.
 
 - The Keycloak administration console should be available at `https://kc.sense-o.es.net/auth/admin/`, and we can login with the username `admin` and password equal to whatever we set the `admin-password` key to in Step 2. From here go to the Users tab and add a new user using the button at the top right. After this new user is created, we'll click into it, head to the Role Mappings tab, and add the `A_Admin` role to create our new admin user. Once we hit Save we'll have made our first real user.
-- Once the Orchestrator is online it should now be available at `https://orch.dev3.virnao.com/StackV-web/portal`. Accessing it should prompt you with a login, where we can use our new user credentials.
+- Once the Orchestrator is online it should now be available at `https://orch.sense-o.es.net/StackV-web/portal`. Accessing it should prompt you with a login, where we can use our new user credentials.
