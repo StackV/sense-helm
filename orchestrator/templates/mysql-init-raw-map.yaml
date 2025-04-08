@@ -358,4 +358,4 @@ metadata:
   namespace: {{ include "common.namespace" . | quote }}
   labels: {{- include "common.labels" . | nindent 4 }}
     app.kubernetes.io/component: mysql
-  name: {{ .Release.Name }}-mysql-init-raw
+  name: {{ printf "%s-mysql-init-raw" (include "common.name" .) }}

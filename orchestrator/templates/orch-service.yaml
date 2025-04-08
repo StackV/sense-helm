@@ -5,7 +5,7 @@ metadata:
   namespace: {{ include "common.namespace" . | quote }}
   labels: {{- include "common.labels" . | nindent 4 }}
     app.kubernetes.io/component: orchestrator
-  name: {{.Release.Name}}-orchestrator
+  name: {{ printf "%s-orch" (include "common.name" .) }}
 spec:
   type: {{ .Values.service.type }}
   ipFamilyPolicy: PreferDualStack

@@ -4,13 +4,18 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: {{ include "common.namespace" . | quote }}
-  {{- with .Values.ingress.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
+  {{- if or .Values.ingress.annotations .Values.issuer.enabled }}
+  annotations: 
+  {{- if .Values.ingress.annotations }}
+  {{- include "common.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
+  {{- end }}
+  {{- if .Values.issuer.enabled }}
+    cert-manager.io/issuer: {{ default (printf "%s-issuer" (include "common.name" .)) .Values.issuer.name  }}
+  {{- end }}
   {{- end }}
   labels: {{- include "common.labels" . | nindent 4 }}
     app.kubernetes.io/component: orchestrator
-  name: {{.Release.Name}}-ingress
+  name: {{ printf "%s-ingress" (include "common.name" .) }}
 spec:
   ingressClassName: {{.Values.ingress.className}}
   rules:
@@ -19,7 +24,7 @@ spec:
         paths:
           - backend:
               service:
-                name: {{.Release.Name}}-orchestrator
+                name: {{ printf "%s-orch" (include "common.name" .) }}
                 port:
                   number: 8080
             path: /

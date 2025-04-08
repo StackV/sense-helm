@@ -6,7 +6,7 @@ metadata:
   namespace: {{ include "common.namespace" . | quote }}
   labels: {{- include "common.labels" . | nindent 4 }}
     app.kubernetes.io/component: orchestrator
-  name: {{ .Values.issuer.name }}
+  name: {{ default (printf "%s-issuer" (include "common.name" .)) .Values.issuer.name  }}
 spec:
   acme:
     email: {{ .Values.issuer.email }}

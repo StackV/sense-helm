@@ -8,7 +8,7 @@ metadata:
     helm.sh/resource-policy: "keep"
   labels: {{- include "common.labels" . | nindent 4 }}
     app.kubernetes.io/component: mysql
-  name: {{ default (printf "%s-mysql-pvc" .Release.Name) .Values.mysql.pvcName }}
+  name: {{ default (printf "%s-mysql-init-raw" (include "common.name" .)) .Values.mysql.pvcName }}
 spec:
   accessModes:
     - ReadWriteOnce

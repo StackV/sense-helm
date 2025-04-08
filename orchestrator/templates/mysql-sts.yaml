@@ -1,3 +1,4 @@
+{{- $mysqlName := printf "%s-mysql" (include "common.name" .) }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -5,21 +6,21 @@ metadata:
   namespace: {{ include "common.namespace" . | quote }}
   labels: {{- include "common.labels" . | nindent 4 }}
     app.kubernetes.io/component: mysql
-  name: {{.Release.Name}}-mysql
+  name: {{ $mysqlName }}
 spec:
   selector:
     matchLabels: {{ include "common.labels.match" . | nindent 6 }}
       app.kubernetes.io/component: mysql
-  serviceName: {{.Release.Name}}-mysql
+  serviceName: {{ $mysqlName }}
   replicas: 1
   template:
     metadata:
       labels: {{- include "common.labels" . | nindent 8 }}
         app.kubernetes.io/component: mysql
-      name: {{.Release.Name}}-mysql
+      name: {{ $mysqlName }}
     spec:
       containers:
-        - name: {{.Release.Name}}-mysql
+        - name: {{ $mysqlName }}
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
@@ -80,11 +81,7 @@ spec:
             name: {{.Release.Name}}-mysql-config
           name: mysql-config
         - configMap:
-            {{- if eq .Values.global.mode "test" }}
-            name: {{.Release.Name}}-mysql-init-dump
-            {{- else }}
             name: {{.Release.Name}}-mysql-init-raw
-            {{- end }}
           name: mysql-init
       {{- if .Values.mysql.affinity }}
       affinity: {{- include "common.render" ( dict "value" .Values.mysql.affinity "context" $) | nindent 8 }}

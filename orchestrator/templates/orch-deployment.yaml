@@ -1,3 +1,5 @@
+{{- $orchName := printf "%s-orch" (include "common.name" .) }}
+{{- $mysqlName := printf "%s-mysql" (include "common.name" .) }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -5,7 +7,7 @@ metadata:
   namespace: {{ include "common.namespace" . | quote }}
   labels: {{- include "common.labels" . | nindent 4 }}
     app.kubernetes.io/component: orchestrator
-  name: {{.Release.Name}}-orch
+  name: {{ $orchName }}
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -20,7 +22,7 @@ spec:
         link.argocd.argoproj.io/external-link: https://{{ .Values.ingress.hostname | default .Values.global.domain }}/StackV-web/portal/
       labels: {{- include "common.labels" . | nindent 8 }}
         app.kubernetes.io/component: orchestrator
-      name: {{ .Release.Name }}-orch
+      name: {{ $orchName }}
     spec:
       {{- with .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -31,7 +33,7 @@ spec:
           imagePullPolicy: Always
           args:
             - /bin/wait-for-it.sh
-            - {{ .Release.Name }}-mysql:3306
+            - {{ $mysqlName }}:3306
             - "-t"
             - "600"
             - "-s"
@@ -45,7 +47,7 @@ spec:
             - name: NO_SERVER_KEYSTORE
               value: "true"
             - name: DB_HOST
-              value: "{{.Release.Name}}-mysql:3306"
+              value: "{{ $mysqlName }}:3306"
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
@@ -110,7 +112,7 @@ spec:
           {{- else if .Values.probes.readiness.custom }}
           readinessProbe: {{- include "common.render" (dict "value" .Values.probes.readiness.custom "context" $) | nindent 12 }}
           {{- end }}        
-          name: {{.Release.Name}}-orchestrator
+          name: {{ $orchName }}
           ports:
             - containerPort: 8443
               name: app-https

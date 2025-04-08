@@ -18,4 +18,4 @@ metadata:
   namespace: {{ include "common.namespace" . | quote }}
   labels: {{- include "common.labels" . | nindent 4 }}
     app.kubernetes.io/component: mysql
-  name: {{.Release.Name}}-mysql-config
+  name: {{ printf "%s-mysql-config" (include "common.name" .) }}
