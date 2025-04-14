@@ -28,6 +28,39 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.init.enabled }}
+      initContainers:
+        {{- if .Values.init.migration.enabled }}
+        - name: "{{ $orchName }}-db-init-frontend"
+          image: "{{ .Values.init.migration.image }}:{{ default .Chart.AppVersion (default .Values.image.tag .Values.init.migration.tag)}}-frontend"
+          imagePullPolicy: Always
+          args: ["deploy", "-t", "db:mysql://$(SQITCH_USER):$(SQITCH_PASSWORD)@$(SQITCH_DB_HOST)/frontend"]
+          env:
+            - name: SQITCH_USER
+              value: "root"
+            - name: SQITCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.credSecret }}
+                  key: {{ .Values.mysql.passwordKey }}
+            - name: SQITCH_DB_HOST
+              value: "{{ $mysqlName }}:3306"
+        - name: "{{ $orchName }}-db-init"
+          image: "{{ .Values.init.migration.image }}:{{ default .Chart.AppVersion (default .Values.image.tag .Values.init.migration.tag)}}"
+          imagePullPolicy: Always
+          args: ["deploy", "-t", "db:mysql://$(SQITCH_USER):$(SQITCH_PASSWORD)@$(SQITCH_DB_HOST)/rainsdb"]
+          env:
+            - name: SQITCH_USER
+              value: "root"
+            - name: SQITCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.credSecret }}
+                  key: {{ .Values.mysql.passwordKey }}
+            - name: SQITCH_DB_HOST
+              value: "{{ $mysqlName }}:3306"
+        {{- end }}
+      {{- end }}
       containers:
         - image: "{{ .Values.image.repo }}:{{ default .Chart.AppVersion .Values.image.tag }}"
           imagePullPolicy: Always

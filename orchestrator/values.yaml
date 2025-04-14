@@ -29,6 +29,18 @@ image:
   ## @param image.pullSecrets Secrets for any private docker registry access.
   pullSecrets: []
 #
+init:
+  ## @param init.enabled Whether to enable the built-in init containers.
+  enabled: true
+  #
+  migration:
+    ## @param init.migration.enabled Whether to enable the automatic DB migration containers.
+    enabled: false
+    ## @param init.migration.image DB migration tooling image.
+    image: virnao/sense-db-migration
+    ## @param init.migration.tag DB migration tooling tag.
+    tag:
+#
 ingress:
   ## @param ingress.enabled Whether to enable the ingress resource.
   enabled: true

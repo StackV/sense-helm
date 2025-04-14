@@ -80,7 +80,7 @@ spec:
             name: {{ printf "%s-mysql-config" (include "common.name" .) }}
           name: mysql-config
         - configMap:
-            name: {{ printf "%s-mysql-init-raw" (include "common.name" .) }}
+            name: {{ printf "%s-mysql-init" (include "common.name" .) }}
           name: mysql-init
       {{- if .Values.mysql.affinity }}
       affinity: {{- include "common.render" ( dict "value" .Values.mysql.affinity "context" $) | nindent 8 }}

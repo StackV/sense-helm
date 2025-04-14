@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  a_preprocess.sql: |-
+    -- Database Creation
+    CREATE DATABASE IF NOT EXISTS `frontend`;
+    CREATE DATABASE IF NOT EXISTS `rainsdb`;
+kind: ConfigMap
+metadata:
+  namespace: {{ include "common.namespace" . | quote }}
+  labels: {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mysql
+  name: {{ printf "%s-mysql-init" (include "common.name" .) }}
