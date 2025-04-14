@@ -22,8 +22,8 @@ global:
 ##
 #
 image:
-  ## @param image.repo Orchestrator image.
-  repo: virnao/sense-orchestrator
+  ## @param image.repository Orchestrator image.
+  repository: virnao/sense-orchestrator
   ## @param image.tag Image tag to pull.
   tag:
   ## @param image.pullSecrets Secrets for any private docker registry access.
@@ -36,9 +36,9 @@ init:
   migration:
     ## @param init.migration.enabled Whether to enable the automatic DB migration containers.
     enabled: false
-    ## @param init.migration.image DB migration tooling image.
-    image: virnao/sense-db-migration
-    ## @param init.migration.tag DB migration tooling tag.
+    ## @param init.migration.repository DB migration tooling image.
+    repository: virnao/sense-db-migration
+    ## @param init.migration.tag DB migration tooling tag. This should be set to the same initial tag as [image.tag].
     tag:
 #
 ingress:
