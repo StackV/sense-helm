@@ -51,7 +51,7 @@ ingress:
   ## @param ingress.annotations Ingress annotations.
   annotations:
   ## @param ingress.tlsSecret TLS secret name for ingress termination.
-  tlsSecret: tls-stackv-orchestrator
+  tlsSecret:
 #
 issuer:
   ## @param issuer.enabled Whether to enable the integrated cert-manager Issuer.

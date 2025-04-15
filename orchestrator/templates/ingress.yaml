@@ -33,6 +33,6 @@ spec:
     - hosts:
         - {{ .Values.ingress.hostname | default .Values.global.domain }}
       {{- if .Values.ingress.tlsSecret }}
-      secretName: {{.Values.ingress.tlsSecret}}
+      secretName: {{ printf "%s-ingress-secret" (include "common.name" .) }}
       {{- end }}
 {{- end }}
