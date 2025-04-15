@@ -58,6 +58,8 @@ issuer:
   enabled: false
   ## @param issuer.name Overrride for the Issuer name.
   name:
+  ## @param issuer.privateKeySecret Overrride for the Issuer private key secret name.
+  privateKeySecret:
   ## @param issuer.email Email metadata for the Issuer.
   email: example@gmail.com
   ## @param issuer.server Issuing server.
