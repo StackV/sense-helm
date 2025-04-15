@@ -8,6 +8,5 @@ kubectl create secret generic sense-cred \
 
 #
 # Configure or download a valid JKS keystore and run the following to create the required keystore secret for the chart:
-kubectl create secret generic sense-keystores \
-    --from-file=client.keystore \
-    -o yaml --dry-run=client
+kubectl delete secret sense-keystores --dry-run=client
+kubectl create secret generic sense-keystores --from-file=client.keystore -o yaml --dry-run=client
