@@ -12,7 +12,7 @@ spec:
     email: {{ .Values.issuer.email }}
     preferredChain: ""
     privateKeySecretRef:
-      name: {{ default (printf "%s-mysql" (include "common.name" .)) .Values.issuer.privateKeySecret  }}
+      name: {{ default (printf "%s-private-key" (include "common.name" .)) .Values.issuer.privateKeySecret  }}
     server: {{ .Values.issuer.server }}
     solvers:
     {{- if .Values.issuer.solvers }}
