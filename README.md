@@ -8,7 +8,7 @@ The SENSE-O deployment is container based and both Docker Stack or Kubernetes ca
 
 As a practical example of how to use these charts, let's assume the following:
 
-> This tutorial was written on 2025-04-05, using chart versions OC:1.9.3 and KC:0.6.3 .
+> This tutorial was written on 2025-04-05, using chart versions OC:1.10.1 and KC:0.6.4 .
 
 - We are deploying to a cluster with a storage provisioner and ingress controller set up, as well as a cert-manager `ClusterIssuer` named `le-sense-cluster`.
 - We are deploying both the Orchestrator and Keycloak to the same cluster, within the `sense` namespace.
@@ -17,7 +17,7 @@ As a practical example of how to use these charts, let's assume the following:
 1. The first step to deploying the helm charts is to add this repository to our local helm cache:
 
 ```
-helm add sense-helm https://stackv.github.io/sense-helm/
+helm repo add sense-helm https://stackv.github.io/sense-helm/
 helm repo update
 ```
 
@@ -25,7 +25,7 @@ helm repo update
 
    - For Keycloak we need to set the initial admin password: `kubectl -n sense create secret generic sense-kc-cred --from-literal=admin-password='{REPLACE_ME}'`.
    - For the orchestrator install we need to establish a set of passwords for various components (DB access, Client TLS, SMTP): `kubectl -n sense create secret generic sense-orch-cred --from-literal=tls-password='{REPLACE_ME}' --from-literal=mysql-password='{REPlACE_ME}' --from-literal=mail-password='nomail'`
-   - For the orchestrator to connect to provider API or standalone RMs, we'll also need a client keystore file: `kubectl -n sense create secret generic sense-client-keystore --from-file={REPLACE_ME}/client.keystore`
+   - For the orchestrator to connect to provider API or standalone RMs, we'll also need a client keystore file: `kubectl -n sense create secret generic sense-client-keystore --from-file={REPLACE_ME}/client.keystore`. This keystore file can be provided by us, or you can assemble your own JKS client certificate store.
 
 3. With those secrets in place, we can now configure our local value files. To do this we'll create two files, `keycloak.values.yaml` and `orchestrator.values.yaml`. For more information about the options available, please see the individual chart directories. Make sure to adjust the following if you change the names of any secrets above.
 
