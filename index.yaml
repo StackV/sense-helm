@@ -1,190 +1,96 @@
 apiVersion: v1
 entries:
   sense-keycloak:
-  - apiVersion: v2
-    appVersion: 18.0.2
-    created: "2025-04-08T10:00:10.403248-04:00"
-    dependencies:
-    - name: keycloak
-      repository: https://charts.bitnami.com/bitnami
-      version: 9.8.1
-    description: Keycloak pre-configured for the SENSE Orchestrator.
-    digest: 0f59ed1821a9841519cbeb942db99ed7c0287c367405f442ff89568dbed6f2ee
-    name: sense-keycloak
-    urls:
-    - sense-keycloak-0.6.4.tgz
-    version: 0.6.4
-  - apiVersion: v2
-    appVersion: 18.0.2
-    created: "2025-04-07T12:26:47.960194-04:00"
-    dependencies:
-    - name: keycloak
-      repository: https://charts.bitnami.com/bitnami
-      version: 9.8.1
-    description: Keycloak pre-configured for the SENSE Orchestrator.
-    digest: abc59a230828321c1fae0bd44052b8ff6d96474ef0cccefebeec1a96dffcd1ce
-    name: sense-keycloak
-    urls:
-    - sense-keycloak-0.6.3.tgz
-    version: 0.6.3
-  - apiVersion: v2
-    appVersion: 18.0.2
-    created: "2025-04-07T08:16:26.843085-04:00"
-    dependencies:
-    - name: keycloak
-      repository: https://charts.bitnami.com/bitnami
-      version: 9.8.1
-    description: Keycloak pre-configured for the SENSE Orchestrator.
-    digest: f58d0e7209d25f853a1bed95f69be2a5dd9fd7a2591694957a75fa5f09cf67b2
-    name: sense-keycloak
-    urls:
-    - sense-keycloak-0.6.2.tgz
-    version: 0.6.2
-  - apiVersion: v2
-    appVersion: 18.0.2
-    created: "2025-04-07T08:04:59.188621-04:00"
-    dependencies:
-    - name: keycloak
-      repository: https://charts.bitnami.com/bitnami
-      version: 9.8.1
-    description: Keycloak pre-configured for the SENSE Orchestrator.
-    digest: 9490a03caf0525542eb77b9322595a2b50d3f6377ce6e03ae2d79abc43f208d3
-    name: sense-keycloak
-    urls:
-    - sense-keycloak-0.6.1.tgz
-    version: 0.6.1
-  - apiVersion: v2
-    appVersion: 18.0.2
-    created: "2025-04-05T18:31:08.017139-04:00"
-    dependencies:
-    - name: keycloak
-      repository: https://charts.bitnami.com/bitnami
-      version: 9.8.1
-    description: Keycloak Pre-configured for the SENSE Orchestrator
-    digest: 13fa41460445d8f704332dea77daf6959e5604cc074f7a2195cba121eb2ade9d
-    name: sense-keycloak
-    urls:
-    - sense-keycloak-0.6.0.tgz
-    version: 0.6.0
+    - apiVersion: v2
+      appVersion: 18.0.2
+      created: "2025-04-08T10:00:10.403248-04:00"
+      dependencies:
+        - name: keycloak
+          repository: https://charts.bitnami.com/bitnami
+          version: 9.8.1
+      description: Keycloak pre-configured for the SENSE Orchestrator.
+      digest: 0f59ed1821a9841519cbeb942db99ed7c0287c367405f442ff89568dbed6f2ee
+      name: sense-keycloak
+      urls:
+        - sense-keycloak-0.6.4.tgz
+      version: 0.6.4
+    - apiVersion: v2
+      appVersion: 18.0.2
+      created: "2025-04-07T12:26:47.960194-04:00"
+      dependencies:
+        - name: keycloak
+          repository: https://charts.bitnami.com/bitnami
+          version: 9.8.1
+      description: Keycloak pre-configured for the SENSE Orchestrator.
+      digest: abc59a230828321c1fae0bd44052b8ff6d96474ef0cccefebeec1a96dffcd1ce
+      name: sense-keycloak
+      urls:
+        - sense-keycloak-0.6.3.tgz
+      version: 0.6.3
+    - apiVersion: v2
+      appVersion: 18.0.2
+      created: "2025-04-07T08:16:26.843085-04:00"
+      dependencies:
+        - name: keycloak
+          repository: https://charts.bitnami.com/bitnami
+          version: 9.8.1
+      description: Keycloak pre-configured for the SENSE Orchestrator.
+      digest: f58d0e7209d25f853a1bed95f69be2a5dd9fd7a2591694957a75fa5f09cf67b2
+      name: sense-keycloak
+      urls:
+        - sense-keycloak-0.6.2.tgz
+      version: 0.6.2
+    - apiVersion: v2
+      appVersion: 18.0.2
+      created: "2025-04-07T08:04:59.188621-04:00"
+      dependencies:
+        - name: keycloak
+          repository: https://charts.bitnami.com/bitnami
+          version: 9.8.1
+      description: Keycloak pre-configured for the SENSE Orchestrator.
+      digest: 9490a03caf0525542eb77b9322595a2b50d3f6377ce6e03ae2d79abc43f208d3
+      name: sense-keycloak
+      urls:
+        - sense-keycloak-0.6.1.tgz
+      version: 0.6.1
+    - apiVersion: v2
+      appVersion: 18.0.2
+      created: "2025-04-05T18:31:08.017139-04:00"
+      dependencies:
+        - name: keycloak
+          repository: https://charts.bitnami.com/bitnami
+          version: 9.8.1
+      description: Keycloak Pre-configured for the SENSE Orchestrator
+      digest: 13fa41460445d8f704332dea77daf6959e5604cc074f7a2195cba121eb2ade9d
+      name: sense-keycloak
+      urls:
+        - sense-keycloak-0.6.0.tgz
+      version: 0.6.0
   sense-orchestrator:
-  - apiVersion: v2
-    appVersion: dev-r25.0
-    created: "2025-05-05T15:04:30.418116-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: 07266c202ae60f72574520f9a16712458199008bb635d74b1d8905226dd2d66e
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.10.1.tgz
-    version: 1.10.1
-  - apiVersion: v2
-    appVersion: dev-r25.0
-    created: "2025-04-14T15:15:27.599593-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: 5663daec9f32d0c27fb2ace95d0a687237d59be6ca928504927cf9716af6523e
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.10.0.tgz
-    version: 1.10.0
-  - apiVersion: v2
-    appVersion: r25-dev
-    created: "2025-04-08T08:58:28.038038-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: 02ea05ff6748b7266487c027d0d3ad3b8c12b6f734a91a45800aad429497d004
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.9.8.tgz
-    version: 1.9.8
-  - apiVersion: v2
-    appVersion: r25-dev
-    created: "2025-04-07T16:25:31.089628-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: 33273fd5fd2240b1d69db10593aa190d5883341ee5ee52f7f60d744b564d5973
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.9.7.tgz
-    version: 1.9.7
-  - apiVersion: v2
-    appVersion: r25-dev
-    created: "2025-04-07T16:23:35.64273-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: 8c17e76444a1f3f46f630ac4e141fc494d1ab0cdff7b7dfdbb7853a7b95e51b6
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.9.6.tgz
-    version: 1.9.6
-  - apiVersion: v2
-    appVersion: r25-dev
-    created: "2025-04-07T16:15:16.709241-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: fe2cd3a9fec0e2e4ab32671f7e42a5dc6ec60b81cc5eb048d3ef7eff6fded64c
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.9.5.tgz
-    version: 1.9.5
-  - apiVersion: v2
-    appVersion: r25-dev
-    created: "2025-04-07T15:58:50.707098-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: 44d181e1b2097b28af938c402894e7392f7ad291a7ba952f769168355d06f46c
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.9.4.tgz
-    version: 1.9.4
-  - apiVersion: v2
-    appVersion: r25-dev
-    created: "2025-04-07T14:01:42.810507-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: a70651de348840e35b6dbfd624879187c2a6cf6ca8f7887a76416c336d0c4404
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.9.3.tgz
-    version: 1.9.3
-  - apiVersion: v2
-    appVersion: r25-dev
-    created: "2025-04-05T18:30:40.029183-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: 1d8bd533ce44874c0770aa84c10f8c5512d7a7eb0a85db1a288d892e5360d5bd
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.9.2.tgz
-    version: 1.9.2
-  - apiVersion: v2
-    appVersion: r25-dev
-    created: "2025-04-04T08:41:58.249945-04:00"
-    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
-      portal package).
-    digest: 34d7f65aeefa300e2c8469f4d82900dcacd793ffe789183836838f892076a008
-    keywords:
-    - orchestrator
-    name: sense-orchestrator
-    urls:
-    - sense-orchestrator-1.9.1.tgz
-    version: 1.9.1
-generated: "2025-05-05T15:04:31.721327-04:00"
+    - apiVersion: v2
+      appVersion: dev-r25.0
+      created: "2025-05-05T15:04:30.418116-04:00"
+      description:
+        Helm chart for the SENSE-O app stack (SENSE orchestrator and web
+        portal package).
+      digest: 07266c202ae60f72574520f9a16712458199008bb635d74b1d8905226dd2d66e
+      keywords:
+        - orchestrator
+      name: sense-orchestrator
+      urls:
+        - sense-orchestrator-1.10.1.tgz
+      version: 1.10.1
+    - apiVersion: v2
+      appVersion: dev-r25.0
+      created: "2025-04-14T15:15:27.599593-04:00"
+      description:
+        Helm chart for the SENSE-O app stack (SENSE orchestrator and web
+        portal package).
+      digest: 5663daec9f32d0c27fb2ace95d0a687237d59be6ca928504927cf9716af6523e
+      keywords:
+        - orchestrator
+      name: sense-orchestrator
+      urls:
+        - sense-orchestrator-1.10.0.tgz
+      version: 1.10.0
+generated: "2025-05-05T15:06:31.721327-04:00"
