@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.11.0
+
+Make DB migration specification more intuitive and consistent. Add default blank keystore secret.
+
 ## 1.10.1
 
 Allow better Issuer configuration.

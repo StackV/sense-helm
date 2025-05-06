@@ -32,7 +32,7 @@ spec:
       initContainers:
         {{- if .Values.init.migration.enabled }}
         - name: "{{ $orchName }}-db-init-frontend"
-          image: "{{ .Values.init.migration.repository }}:{{ default .Chart.AppVersion .Values.init.migration.tag }}-frontend"
+          image: "{{ .Values.init.migration.repository }}:{{ splitList "@" (default .Chart.AppVersion (default .Values.image.tag .Values.init.migration.tag)) | first }}-frontend"
           imagePullPolicy: Always
           args: ["deploy", "-t", "db:mysql://$(SQITCH_USER):$(SQITCH_PASSWORD)@$(SQITCH_DB_HOST)/frontend"]
           env:
@@ -46,7 +46,7 @@ spec:
             - name: SQITCH_DB_HOST
               value: "{{ $mysqlName }}:3306"
         - name: "{{ $orchName }}-db-init"
-          image: "{{ .Values.init.migration.repository }}:{{ default .Chart.AppVersion .Values.init.migration.tag }}"
+          image: "{{ .Values.init.migration.repository }}:{{ splitList "@" (default .Chart.AppVersion (default .Values.image.tag .Values.init.migration.tag)) | first }}"
           imagePullPolicy: Always
           args: ["deploy", "-t", "db:mysql://$(SQITCH_USER):$(SQITCH_PASSWORD)@$(SQITCH_DB_HOST)/rainsdb"]
           env:
@@ -168,7 +168,7 @@ spec:
       restartPolicy: Always
       volumes:
         - secret:
-            secretName: {{ .Values.tls.keystoreSecret }}
+            secretName: {{ default (printf "%s-blank-keystore" (include "common.name" .)) .Values.tls.keystoreSecret }}
           name: client-keystore
       {{- if .Values.affinity }}
       affinity: {{- include "common.render" ( dict "value" .Values.affinity "context" $) | nindent 8 }}

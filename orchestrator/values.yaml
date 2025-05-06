@@ -35,10 +35,12 @@ init:
   #
   migration:
     ## @param init.migration.enabled Whether to enable the automatic DB migration containers.
-    enabled: false
+    ## If there are issues with existing migrations preventing startup, disabling these will help, but manual remediation will be necessary in the future.
+    enabled: true
     ## @param init.migration.repository DB migration tooling image.
     repository: virnao/sense-db-migration
-    ## @param init.migration.tag DB migration tooling tag. This should be set to the same initial tag as [image.tag].
+    ## @param init.migration.tag An explicit override for the migration tooling tag.
+    ## Defaults to same base value as `image.tag` if unset, minus any specific SHA specification.
     tag:
 #
 ingress:
@@ -104,8 +106,8 @@ service:
 tls:
   ## @param tls.passwordKey Key of the password for the orchestrator keystore files, found in `.global.credSecret`.
   passwordKey: tls-password
-  ## @param tls.keystoreSecret Name of Kubernetes secret for the orchestrator keystore files. If unset, will automatically create the secret and set default keystores.
-  keystoreSecret: sense-keystores
+  ## @param tls.keystoreSecret Name of Kubernetes secret for the orchestrator keystore files. If unset, the chart will automatically create a secret with an empty keystore.
+  keystoreSecret:
 #
 probes:
   startup:
