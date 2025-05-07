@@ -69,11 +69,11 @@ issuer:
   ## @param issuer.solvers Override for the Issuer solvers.
   solvers: []
 #
+java:
+  ## @param java.memory JVM Memory maximum.
+  memory: 8G
+#
 resources:
-  #
-  java:
-    ## @param resources.java.memory JVM Memory maximum.
-    memory: 8G
   #
   requests:
     ## @param resources.requests.cpu Orchestrator CPU request.

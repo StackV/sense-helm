@@ -82,7 +82,7 @@ spec:
             - name: DB_HOST
               value: "{{ $mysqlName }}:3306"
             - name: JAVA_MEMORY
-              value: "9G"
+              value: "{{ .Values.java.memory }}"
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
