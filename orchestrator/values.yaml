@@ -71,6 +71,10 @@ issuer:
 #
 resources:
   #
+  java:
+    ## @param resources.java.memory JVM Memory maximum.
+    memory: 8G
+  #
   requests:
     ## @param resources.requests.cpu Orchestrator CPU request.
     cpu: 2000m
@@ -79,9 +83,9 @@ resources:
   #
   limits:
     ## @param resources.limits.cpu Orchestrator CPU limit.
-    cpu: 16000m
+    cpu: 8000m
     ## @param resources.limits.memory Orchestrator memory limit.
-    memory: 64Gi
+    memory: 32Gi
 #
 service:
   ## @param service.type Orchestrator service type.
