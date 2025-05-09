@@ -4,6 +4,7 @@ keys/
 cred.yml
 cred.yaml
 override-*.yaml
+*.keystore
 # update-pipelines.sh
 /test/
 test.yaml
