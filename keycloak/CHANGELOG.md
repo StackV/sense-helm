@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's pre-configured Keycloak Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 0.6.5
+
+Make underlying PostgreSQL persist the PVC.
+
 ## 0.6.4
 
 Update custom ingress and issuer support.
