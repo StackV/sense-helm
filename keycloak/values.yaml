@@ -64,6 +64,11 @@ keycloak:
     pullPolicy: Always
   readinessProbe:
     enabled: false
+  postgresql:
+    primary:
+      persistence:
+        annotations:
+          helm.sh/resource-policy: keep
   auth:
     adminUser: admin
   service:
