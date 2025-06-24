@@ -1,7 +1,5 @@
 global:
   domain: sense-2.es.net
-  secret:
-    name: kc-cred-secret
 
 namespaceOverride: sense
 
@@ -11,3 +9,13 @@ ingress:
   hostname: kc-admin.{{ .Values.global.domain }}
   authHostname: kc-auth.{{ .Values.global.domain }}
   tlsSecret: existing-tls-secret
+
+keycloak:
+  postgresql:
+    auth:
+      existingSecret: "{{ .Release.Name }}-psql-auth"
+  auth:
+    adminUser: tempadmin
+    existingSecret: "{{ .Release.Name }}-auth"
+  service:
+    type: ClusterIP

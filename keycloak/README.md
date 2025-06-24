@@ -29,11 +29,9 @@ If the ingress was disabled or is non-functional, you can access the web console
 
 ### Global Parameters
 
-| Name                        | Description                                                                                          | Value            |
-| --------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------- |
-| `global.domain`             | The host domain. Can be used for the Ingress hostname such as `keycloak.{{ .Values.global.domain }}` | `example.es.net` |
-| `global.secret.name`        | Secret for the Keycloak credentials.                                                                 | `keycloak-cred`  |
-| `global.secret.passwordKey` | Secret key for the Keycloak admin password.                                                          | `admin-password` |
+| Name            | Description                                                                                          | Value            |
+| --------------- | ---------------------------------------------------------------------------------------------------- | ---------------- |
+| `global.domain` | The host domain. Can be used for the Ingress hostname such as `keycloak.{{ .Values.global.domain }}` | `example.es.net` |
 
 ### Common Parameters
 
@@ -43,11 +41,16 @@ If the ingress was disabled or is non-functional, you can access the web console
 
 ### Custom Ingress Parameters
 
-| Name                   | Description                                                                             | Value                                  |
-| ---------------------- | --------------------------------------------------------------------------------------- | -------------------------------------- |
-| `ingress.enabled`      | Whether to enable the custom Ingress resource.                                          | `true`                                 |
-| `ingress.className`    | The Ingress class.                                                                      | `traefik`                              |
-| `ingress.annotations`  | A dict of additional annotations, such as cert-manager Issuers.                         | `{}`                                   |
-| `ingress.hostname`     | The hostname for the main and unfiltered admin endpoint. Can be templated.              | `keycloak.{{ .Values.global.domain }}` |
-| `ingress.authHostname` | The hostname for the limited auth endpoint, used by the Orchestrator. Can be templated. | `auth.{{ .Values.global.domain }}`     |
-| `ingress.tlsSecret`    | Secret for the TLS credentials. Can be templated.                                       | `{{ .Release.Name }}-tls-keycloak`     |
+| Name                   | Description                                                                             | Value                                            |
+| ---------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `ingress.enabled`      | Whether to enable the custom Ingress resource.                                          | `true`                                           |
+| `ingress.className`    | The Ingress class.                                                                      | `traefik`                                        |
+| `ingress.annotations`  | A dict of additional annotations, such as cert-manager Issuers.                         | `{}`                                             |
+| `ingress.hostname`     | The hostname for the main and unfiltered admin endpoint. Can be templated.              | `keycloak.{{ .Values.global.domain }}`           |
+| `ingress.authHostname` | The hostname for the limited auth endpoint, used by the Orchestrator. Can be templated. | `auth.{{ .Values.global.domain }}`               |
+| `ingress.tlsSecret`    | Secret for the TLS credentials. Can be templated.                                       | `{{ .Release.Name }}-tls-keycloak`               |
+| `issuer.enabled`       | Whether to enable the integrated cert-manager Issuer.                                   | `false`                                          |
+| `issuer.name`          | Overrride for the Issuer name.                                                          | `nil`                                            |
+| `issuer.email`         | Email metadata for the Issuer.                                                          | `example@gmail.com`                              |
+| `issuer.server`        | Issuing server.                                                                         | `https://acme-v02.api.letsencrypt.org/directory` |
+| `issuer.solvers`       | Override for the Issuer solvers.                                                        | `[]`                                             |
