@@ -43,21 +43,21 @@ spec:
                 name: {{ template "common.names.fullname" .Subcharts.keycloak }}
                 port:
                   name: http
-            path: /auth/realms/StackV/
+            path: /realms/StackV/
             pathType: Prefix
           - backend:
               service:
                 name: {{ template "common.names.fullname" .Subcharts.keycloak }}
                 port:
                   name: http
-            path: /auth/admin/realms/StackV/
+            path: /admin/realms/StackV/
             pathType: Prefix
           - backend:
               service:
                 name: {{ template "common.names.fullname" .Subcharts.keycloak }}
                 port:
                   name: http
-            path: /auth/resources/
+            path: /resources/
             pathType: Prefix
     {{- end }}
   tls:

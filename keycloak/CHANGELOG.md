@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's pre-configured Keycloak Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 0.7.1
+
+Adjust ingress pathing to match KC 17 API change.
+
 ## 0.7.0
 
 Test new KC version and templating.
