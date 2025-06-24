@@ -5,7 +5,7 @@ This chart installs a Keycloak server pre-configured with the SENSE theming and 
 
 ## Configuration
 
-This chart wraps around the Bitnami chart found at (https://artifacthub.io/packages/helm/bitnami/keycloak/9.8.1), and uses a custom Keycloak image to handle build optimization steps and realm packaging. In most cases you should be fine reviewing the variables established below from the full `values.yaml` and can copying or templating the `override.template.yaml` file as a base. You may also create your own override by copying from `values.yaml`. Either way, your first step will likely be to create a `override.yaml` and configure (at a minimum) the domain variables: `global.domain` and `ingress.hostname/authHostname`.
+This chart wraps around the Bitnami chart found at (https://artifacthub.io/packages/helm/bitnami/keycloak/24.7.4), and uses a custom Keycloak image to handle build optimization steps and realm packaging. In most cases you should be fine reviewing the variables established below from the full `values.yaml` and can copying or templating the `override.template.yaml` file as a base. You may also create your own override by copying from `values.yaml`. Either way, your first step will likely be to create a `override.yaml` and configure (at a minimum) the domain variables: `global.domain` and `ingress.hostname/authHostname`.
 
 > This chart currently includes a custom ingress template due to legacy incompatibility with some of the Keycloak docker configurations. This will be resolved in a future update and this chart will transition into being a pure coniguration wrapper.
 
@@ -13,11 +13,11 @@ This chart wraps around the Bitnami chart found at (https://artifacthub.io/packa
 
 To initialize the admin user for the Keycloak server an existing secret is required. An example `kubectl` command can be found in `./bin/create_secrets.sh`. Remember to configure the override with the correct name if you change the default resource name.
 
-Keycloak will initialize the `admin` user with the password set at `admin-password`, by default. Currently we do not expose the postgres DB password as this should not be modified, but if needed you can view the secrets templated by the helm subchart.
+Unless overridden, the chart assumes two accessible secrets, `{{ .Release.Name }}-auth` and `{{ .Release.Name }}-psql-auth`. The subcharts will initialize the KC admin and postgres user passwords according to the keys in those secrets; again, refer to `create_secrets.sh` for the specific field names and how to customize them.
 
 ## Installation
 
-After creating the password secret and configuring your override, run `helm install senseo-keycloak . [-f values.yaml] -f override.yaml`.
+After creating the password secrets and configuring your override, run `helm install senseo-keycloak . [-f values.yaml] -f override.yaml`.
 
 ## Usage
 
