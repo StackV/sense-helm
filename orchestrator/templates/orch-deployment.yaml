@@ -76,7 +76,17 @@ spec:
             - /bin/startup.sh
           env:
             - name: KC_DOMAIN
-              value: "{{.Values.global.keycloak}}"
+              value: "{{.Values.auth.host}}"
+            - name: KC_CLIENT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.clientSecret }}
+                  key: client
+            - name: KC_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.clientSecret }}
+                  key: client-secret
             - name: NO_SERVER_KEYSTORE
               value: "true"
             - name: DB_HOST

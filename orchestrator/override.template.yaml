@@ -1,11 +1,13 @@
+---
 # An example template for potential custom overrides.
 global:
   domain: stackv.dev3.virnao.com
-  keycloak: auth.dev3.virnao.com
 image:
   tag: dev3-testing
   pullSecrets:
     - regcred
+auth:
+  host: auth.dev3.virnao.com
 ingress:
   annotations:
     cert-manager.io/cluster-issuer: le-stackv-cluster

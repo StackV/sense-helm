@@ -3,6 +3,11 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.12.0
+
+- **Breaking:** A new secret for Keycloak client authentication is required. See the readme or `./bin/create.secrets.sh` for details.
+- New orchestrator configuration to adapt to updated Keycloak variations.
+
 ## 1.11.1
 
 Passthrough JVM memory maximum allocation setting.

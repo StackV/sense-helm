@@ -11,9 +11,10 @@ Depending on your cluster you will likely need to adjust the persistence variabl
 
 ### Secrets
 
-The orchestrator relies on a set of two secrets that will need to be present before installing the chart. Example `kubectl` commands can be found in `./bin/create_secrets.sh`. Remember to configure your override with the correct names if you change the defaults.
+The orchestrator relies on a set of secrets that will need to be present before installing the chart. Example `kubectl` commands can be found in `./bin/create_secrets.sh`. Remember to configure your override with the correct names if you change the defaults.
 
 - `.Values.global.credSecret` (Default `sense-cred`): Various passwords and credentials used by the orchestrator are set here, namely passwords for the database, client TLS and SMTP.
+- `.Values.auth.clientSecret` (Default `sense-auth-cred`): The Keycloak client ID and secrets are stored here, required for securing the application and are specific to the deployment.
 - `.Values.tls.keystoreSecret` (Default `sense-keystores`): The orchestrator uses a JKS keystore to enable client-based TLS for supported RMs. These are stored in binary data at the `client.keystore` key.
 
 ## Installation
@@ -38,7 +39,6 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 | `global.namespace`  | The target namespace.                                                                             | `sense`               |
 | `global.mode`       | If set to 'test', enables CD test server behavior (seed/reset SQL DB with integration test data). | `prod`                |
 | `global.domain`     | The host domain for the orchestrator.                                                             | `stackv.sense.es.net` |
-| `global.keycloak`   | The domain of an active Keycloak instance, used for authentication.                               | `auth.sense.es.net`   |
 | `global.credSecret` | Secret name for the chart's basic credentials.                                                    | `sense-cred`          |
 
 ### Orchestrator Parameters
@@ -48,6 +48,8 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 | `image.repository`                 | Orchestrator image.                                                                                                                           | `virnao/sense-orchestrator`                      |
 | `image.tag`                        | Image tag to pull.                                                                                                                            | `nil`                                            |
 | `image.pullSecrets`                | Secrets for any private docker registry access.                                                                                               | `[]`                                             |
+| `auth.host`                        | The domain of an active Keycloak instance, used for authentication.                                                                           | `auth.sense.es.net`                              |
+| `auth.clientSecret`                | The ssecret containing the Keycloak auth client information.                                                                                  | `sense-auth-cred`                                |
 | `init.enabled`                     | Whether to enable the built-in init containers.                                                                                               | `true`                                           |
 | `init.migration.enabled`           | Whether to enable the automatic DB migration containers.                                                                                      | `true`                                           |
 | `init.migration.repository`        | DB migration tooling image.                                                                                                                   | `virnao/sense-db-migration`                      |

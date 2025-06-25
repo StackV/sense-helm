@@ -1,3 +1,4 @@
+---
 ### SENSE Orchestrator Configuration
 ###
 
@@ -13,8 +14,6 @@ global:
   mode: prod
   ## @param global.domain The host domain for the orchestrator.
   domain: stackv.sense.es.net
-  ## @param global.keycloak The domain of an active Keycloak instance, used for authentication.
-  keycloak: auth.sense.es.net
   ## @param global.credSecret Secret name for the chart's basic credentials.
   credSecret: sense-cred
 
@@ -29,6 +28,11 @@ image:
   ## @param image.pullSecrets Secrets for any private docker registry access.
   pullSecrets: []
 #
+auth:
+  ## @param auth.host The domain of an active Keycloak instance, used for authentication.
+  host: auth.sense.es.net
+  ## @param auth.clientSecret The ssecret containing the Keycloak auth client information.
+  clientSecret: sense-auth-cred
 init:
   ## @param init.enabled Whether to enable the built-in init containers.
   enabled: true

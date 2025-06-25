@@ -5,8 +5,6 @@
 # owner: StackV
 # git-repo: sense-helm
 
-./updateReadme.sh
-
 cr package orchestrator
 cr package keycloak
 git pull
