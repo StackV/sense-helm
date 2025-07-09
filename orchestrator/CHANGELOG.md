@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.13.0
+
+- Added a `extraObjects` value to allow for generic sideloading of extra K8s manifests, such as external secrets.
+
 ## 1.12.0
 
 - **Breaking:** A new secret for Keycloak client authentication is required. See the readme or `./bin/create.secrets.sh` for details.

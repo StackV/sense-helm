@@ -40,6 +40,7 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 | `global.mode`       | If set to 'test', enables CD test server behavior (seed/reset SQL DB with integration test data). | `prod`                |
 | `global.domain`     | The host domain for the orchestrator.                                                             | `stackv.sense.es.net` |
 | `global.credSecret` | Secret name for the chart's basic credentials.                                                    | `sense-cred`          |
+| `extraObjects`      | Array of extra K8s manifests to deploy                                                            | `[]`                  |
 
 ### Orchestrator Parameters
 
