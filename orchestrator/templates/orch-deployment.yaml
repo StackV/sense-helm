@@ -68,7 +68,7 @@ spec:
           - sh
           - -c
           - |
-            /bin/wait-for-it.sh local-sense-orchestrator-sense-mysql:3306 -t 600 -s -- /bin/startup.sh
+            /bin/wait-for-it.sh {{ $mysqlName }}:3306 -t 600 -s -- /bin/startup.sh
           env:
             - name: KC_DOMAIN
               valueFrom:
