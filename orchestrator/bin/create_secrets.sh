@@ -8,6 +8,7 @@ kubectl create secret generic sense-cred \
 #
 # Modify and run the following to create the required password secret for the chart:
 kubectl create secret generic sense-auth-cred \
+    --from-literal=host='HOST' \
     --from-literal=client='CLIENT' \
     --from-literal=client-secret='CLIENT_SECRET'
 

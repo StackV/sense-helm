@@ -76,7 +76,10 @@ spec:
             - /bin/startup.sh
           env:
             - name: KC_DOMAIN
-              value: "{{.Values.auth.host}}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.clientSecret }}
+                  key: host
             - name: KC_CLIENT
               valueFrom:
                 secretKeyRef:

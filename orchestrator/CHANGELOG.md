@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.14.0
+
+- **Breaking**: The KC auth secret will need to be updated for this version. For ease of transitioning between KC providers and secret integrity, the `auth.host` value has been moved into the `host` key of the KC auth secret. See `bin/create_secrets.sh` for an example.
+
 ## 1.13.0
 
 - Added a `extraObjects` value to allow for generic sideloading of extra K8s manifests, such as external secrets.
