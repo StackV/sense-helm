@@ -3,6 +3,11 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.14.1
+
+- Added built-in templating support for generic certmanager certificate requests.
+- Fixed minor configuration issues for the deployment and ingress resources.
+
 ## 1.14.0
 
 - **Breaking**: The KC auth secret will need to be updated for this version. For ease of transitioning between KC providers and secret integrity, the `auth.host` value has been moved into the `host` key of the KC auth secret. See `bin/create_secrets.sh` for an example.

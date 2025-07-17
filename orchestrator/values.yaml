@@ -49,32 +49,6 @@ init:
     ## Defaults to same base value as `image.tag` if unset, minus any specific SHA specification.
     tag:
 #
-ingress:
-  ## @param ingress.enabled Whether to enable the ingress resource.
-  enabled: true
-  ## @param ingress.className Ingress class.
-  className: traefik
-  ## @param ingress.hostname Explicit host to be used for the ingress. Defaults to `domain` if unset.
-  hostname:
-  ## @param ingress.annotations Ingress annotations.
-  annotations:
-  ## @param ingress.tlsSecret TLS secret name for ingress termination.
-  tlsSecret:
-#
-issuer:
-  ## @param issuer.enabled Whether to enable the integrated cert-manager Issuer.
-  enabled: false
-  ## @param issuer.name Overrride for the Issuer name.
-  name:
-  ## @param issuer.privateKeySecret Overrride for the Issuer private key secret name.
-  privateKeySecret:
-  ## @param issuer.email Email metadata for the Issuer.
-  email: example@gmail.com
-  ## @param issuer.server Issuing server.
-  server: https://acme-v02.api.letsencrypt.org/directory
-  ## @param issuer.solvers Override for the Issuer solvers.
-  solvers: []
-#
 java:
   ## @param java.memory JVM Memory maximum.
   memory: 8G
@@ -142,6 +116,65 @@ nodeSelector: {}
 tolerations: []
 ## @param affinity Orchestrator affinity block.
 affinity: {}
+
+## @section Network Parameters
+## Configuration for service exposure and connectivity.
+#
+ingress:
+  ## @param ingress.enabled Whether to enable the Ingress resource.
+  enabled: true
+  ## @param ingress.className Ingress class override.
+  className:
+  ## @param ingress.hostname Explicit host to be used for the ingress. Defaults to `domain` if unset.
+  hostname:
+  ## @param ingress.annotations Ingress annotations.
+  annotations:
+  ## @param ingress.tlsSecret TLS secret name for ingress termination.
+  tlsSecret:
+#
+certmanager:
+  ##@param certmanager.enabled Whether to enable the custom cert-manager Certificate resource.
+  enabled: false
+  ## @param certmanager.annotations Any optional annotations for the certificate.
+  annotations:
+  ## @param certmanager.commonName CN for the certificate. Defaults to `global.domain` if unset.
+  commonName:
+  ## @param certmanager.dnsNames Optional list of DNS names, uris, emails, or IP addresses. Defaults to a list with `global.domain` if unset.
+  dnsNames:
+  #
+  issuerRef:
+    ## @param certmanager.issuerRef.group The backing issuer group.
+    group: cert-manager.io
+    ## @param certmanager.issuerRef.kind The kind of issuer backing this request.
+    kind: Issuer
+    ## @param certmanager.issuerRef.name Name of the Issuer resource. If the integrated issuer is enabled, leave this blank.
+    name:
+  #
+  privateKey:
+    ## @param certmanager.privateKey.algorithm The private key's encryption algorithm.
+    algorithm: RSA
+    ## @param certmanager.privateKey.encoding The private key's encoding.
+    encoding: PKCS1
+    ## @param certmanager.privateKey.size The private key's size.
+    size: 2048
+  ## @param certmanager.duration Lifetime of the certificate.
+  duration: 2160h
+  ## @param certmanager.renewBefore Renewal timestamp for the certificate.
+  renewBefore: 360h
+#
+issuer:
+  ## @param issuer.enabled Whether to enable the integrated cert-manager Issuer.
+  enabled: false
+  ## @param issuer.name Overrride for the Issuer name.
+  name:
+  ## @param issuer.privateKeySecret Overrride for the Issuer private key secret name.
+  privateKeySecret:
+  ## @param issuer.email Email metadata for the Issuer.
+  email: example@gmail.com
+  ## @param issuer.server Issuing server.
+  server: https://acme-v02.api.letsencrypt.org/directory
+  ## @param issuer.solvers Override for the Issuer solvers.
+  solvers: []
 
 ## @section MySQL Parameters
 ## Configuration for the built-in mysql server.

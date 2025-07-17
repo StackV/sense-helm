@@ -64,16 +64,11 @@ spec:
       containers:
         - image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
           imagePullPolicy: Always
-          args:
-            - /bin/wait-for-it.sh
-            - {{ $mysqlName }}:3306
-            - "-t"
-            - "600"
-            - "-s"
-            - "--"
-            - sh
-            - "-c"
-            - /bin/startup.sh
+          command:
+          - sh
+          - -c
+          - |
+            /bin/wait-for-it.sh local-sense-orchestrator-sense-mysql:3306 -t 600 -s -- /bin/startup.sh
           env:
             - name: KC_DOMAIN
               valueFrom:

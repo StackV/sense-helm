@@ -17,7 +17,9 @@ metadata:
     app.kubernetes.io/component: orchestrator
   name: {{ printf "%s-ingress" (include "common.name" .) }}
 spec:
+  {{- if .Values.ingress.className }}
   ingressClassName: {{.Values.ingress.className}}
+  {{- end }}
   rules:
     - host: {{ .Values.ingress.hostname | default .Values.global.domain }}
       http:

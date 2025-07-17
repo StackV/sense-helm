@@ -1,0 +1,44 @@
+---
+{{- if .Values.certmanager.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  namespace: {{ include "common.namespace" . | quote }}
+  {{- if .Values.certmanager.annotations }}
+  annotations: 
+  {{- include "common.render" (dict "value" .Values.certmanager.annotations "context" $) | nindent 4 }}
+  {{- end }}
+  labels: {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/component: orchestrator
+  name: {{ printf "%s-cert" (include "common.name" .) }}
+spec:
+  secretName: {{ printf "%s-cert" (include "common.name" .) }}
+  commonName: {{ .Values.certmanager.commonName | default .Values.global.domain }}
+  {{- if .Values.certmanager.dnsNames }}  
+  dnsNames:
+  {{- include "common.render" (dict "value" .Values.certmanager.dnsNames "context" $) | nindent 4 }}
+  {{- else }}
+  dnsNames:
+    - {{ .Values.global.domain }}
+  {{- end }}
+  duration: {{ .Values.certmanager.duration }}
+  renewBefore: {{ .Values.certmanager.renewBefore }}
+  {{- if .Values.certmanager.issuerRef }}
+  issuerRef:
+    group: {{ .Values.certmanager.issuerRef.group }}
+    kind: {{ .Values.certmanager.issuerRef.kind }}
+    {{- if .Values.certmanager.issuerRef.name }}
+    name: {{ .Values.certmanager.issuerRef.name }}
+    {{- else if .Values.issuer.enabled }}
+    name: {{ default (printf "%s-issuer" (include "common.name" .)) .Values.issuer.name }}
+    {{- else }}
+    name: sense-issuer
+    {{- end}}
+  {{- end }}
+  {{- if .Values.certmanager.privateKey }}
+  privateKey:
+    algorithm: {{ .Values.certmanager.privateKey.algorithm }}
+    encoding: {{ .Values.certmanager.privateKey.encoding }}
+    size: {{ .Values.certmanager.privateKey.size }}
+  {{- end }}
+{{- end }}

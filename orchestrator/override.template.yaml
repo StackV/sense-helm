@@ -15,8 +15,15 @@ resources:
   requests:
     cpu: 500m
     memory: 4Gi
+issuer:
+  enabled: false
 tls:
   keystoreSecret: sense-o-keystore
 mysql:
   generatePVC: false
   pvcName: app-mysql-pvc
+certmanager:
+  enabled: true
+  privateKey:
+    algorithm: PSQ
+    size: 4096
