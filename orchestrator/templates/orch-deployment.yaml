@@ -121,10 +121,8 @@ spec:
             httpGet:
               path: /
               port: 8080
-            failureThreshold: 24
-            initialDelaySeconds: 60
-            periodSeconds: 15
-            successThreshold: 1
+            failureThreshold: 10
+            initialDelaySeconds: 120
             timeoutSeconds: 5
           {{- else if .Values.probes.startup.custom }}
           startupProbe: {{- include "common.render" (dict "value" .Values.probes.startup.custom "context" $) | nindent 12 }}
@@ -134,9 +132,7 @@ spec:
             httpGet:
               path: /
               port: 8080
-            failureThreshold: 6
-            periodSeconds: 15
-            successThreshold: 1
+            failureThreshold: 10
             timeoutSeconds: 5
           {{- else if .Values.probes.liveness.custom }}
           livenessProbe: {{- include "common.render" (dict "value" .Values.probes.liveness.custom "context" $) | nindent 12 }}
@@ -147,11 +143,7 @@ spec:
               scheme: HTTPS
               path: /StackV-web/portal/
               port: 8443
-            failureThreshold: 9
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 60
+            timeoutSeconds: 15
           {{- else if .Values.probes.readiness.custom }}
           readinessProbe: {{- include "common.render" (dict "value" .Values.probes.readiness.custom "context" $) | nindent 12 }}
           {{- end }}        
