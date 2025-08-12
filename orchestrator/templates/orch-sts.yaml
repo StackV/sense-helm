@@ -2,7 +2,7 @@
 {{- $mysqlName := printf "%s-mysql" (include "common.name" .) }}
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   namespace: {{ include "common.namespace" . | quote }}
   labels: {{- include "common.labels" . | nindent 4 }}
