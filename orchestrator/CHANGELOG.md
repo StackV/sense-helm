@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.14.3
+
+- Converted orchestrator Deployment to Statefulset in order to get around pruning policies at IRI.
+
 ## 1.14.2
 
 - Added built-in templating support for generic certmanager certificate requests.
