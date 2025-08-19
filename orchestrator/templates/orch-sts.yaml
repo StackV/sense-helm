@@ -132,8 +132,8 @@ spec:
             httpGet:
               path: /
               port: 8080
-            failureThreshold: 10
-            timeoutSeconds: 5
+            failureThreshold: 6
+            timeoutSeconds: 15
           {{- else if .Values.probes.liveness.custom }}
           livenessProbe: {{- include "common.render" (dict "value" .Values.probes.liveness.custom "context" $) | nindent 12 }}
           {{- end }}

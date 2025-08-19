@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.14.4
+
+- Extend default liveness threshold to accomodate standard container delays.
+
 ## 1.14.3
 
 - Converted orchestrator Deployment to Statefulset in order to get around pruning policies at IRI.
