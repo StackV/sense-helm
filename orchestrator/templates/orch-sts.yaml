@@ -132,6 +132,7 @@ spec:
             httpGet:
               path: /
               port: 8080
+              scheme: HTTP
             failureThreshold: 6
             timeoutSeconds: 15
           {{- else if .Values.probes.liveness.custom }}
@@ -142,8 +143,9 @@ spec:
             httpGet:
               path: /StackV-web/portal/
               port: 8080
+              scheme: HTTP
             timeoutSeconds: 15
-            initialDelaySeconds: 15
+            initialDelaySeconds: 30
           {{- else if .Values.probes.readiness.custom }}
           readinessProbe: {{- include "common.render" (dict "value" .Values.probes.readiness.custom "context" $) | nindent 12 }}
           {{- end }}        

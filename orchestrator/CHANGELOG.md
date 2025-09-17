@@ -3,8 +3,9 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
-## 1.14.6
+## 1.14.7
 
+- Assorted stateful set fixes.
 - Set readiness probe defaults to use HTTP heartbeat endpoint instead.
 
 ## 1.14.4
