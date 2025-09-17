@@ -95,6 +95,18 @@ entries:
   sense-orchestrator:
   - apiVersion: v2
     appVersion: dev-r25.0
+    created: "2025-09-17T11:29:17.963081-04:00"
+    description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
+      portal package).
+    digest: 048024c44034e0cf085e50b5c5f49f3c906b322d88d83ad7dc1ec012ca3bffbf
+    keywords:
+    - orchestrator
+    name: sense-orchestrator
+    urls:
+    - sense-orchestrator-1.14.7.tgz
+    version: 1.14.7
+  - apiVersion: v2
+    appVersion: dev-r25.0
     created: "2025-09-17T11:06:31.831267-04:00"
     description: Helm chart for the SENSE-O app stack (SENSE orchestrator and web
       portal package).
@@ -309,4 +321,4 @@ entries:
     urls:
     - sense-orchestrator-1.9.2.tgz
     version: 1.9.2
-generated: "2025-09-17T11:06:33.783222-04:00"
+generated: "2025-09-17T11:29:19.435079-04:00"
