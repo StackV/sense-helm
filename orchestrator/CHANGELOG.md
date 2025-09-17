@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.14.6
+
+- Set readiness probe defaults to use HTTP heartbeat endpoint instead.
+
 ## 1.14.4
 
 - Extend default liveness threshold to accomodate standard container delays.
