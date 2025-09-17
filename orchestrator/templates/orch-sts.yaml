@@ -140,10 +140,10 @@ spec:
           {{- if .Values.probes.readiness.enabled }}
           readinessProbe:
             httpGet:
-              scheme: HTTPS
               path: /StackV-web/portal/
-              port: 8443
+              port: 8080
             timeoutSeconds: 15
+            initialDelaySeconds: 15
           {{- else if .Values.probes.readiness.custom }}
           readinessProbe: {{- include "common.render" (dict "value" .Values.probes.readiness.custom "context" $) | nindent 12 }}
           {{- end }}        
