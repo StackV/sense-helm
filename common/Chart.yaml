@@ -1,22 +1,15 @@
 apiVersion: v2
-name: sense-keycloak
-description: Keycloak pre-configured for the SENSE Orchestrator.
+name: sense-commons
+description: Commons library adopted from legacy archives.
+type: library
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.8.0
+version: 1.0.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "26.2.5"
-
-dependencies:
-  - name: keycloak
-    version: 24.7.4
-    repository: https://charts.bitnami.com/bitnami
-  # - name: sense-commons
-  #   version: 1.x.x
-  #   repository: https://stackv.github.io/sense-helm/
+appVersion: "1.0.0"
