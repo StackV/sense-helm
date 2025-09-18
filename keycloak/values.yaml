@@ -18,6 +18,21 @@ global:
 ## @param namespaceOverride Override for the Helm namespace.
 namespaceOverride:
 
+## @section PostgreSQL Cluster Parameters
+##
+#
+psql:
+  ## @param psql.enabled Whether to enable the included CNPG Cluster CRD.
+  enabled: true
+  ## @param psql.name Custom name for the CNPG Cluster.
+  name:
+  ## @param psql.username Username to create to own the cluster database.
+  username: keycloak
+  ## @param psql.database The cluster init database name.
+  database: keycloak
+  ## @param psql.secret The secret with the database password specified.
+  secret: "{{ .Release.Name }}-psql-auth"
+
 ## @section Custom Ingress Parameters
 ##
 #
@@ -63,11 +78,11 @@ keycloak:
   postgresql:
     enabled: false
   externalDatabase:
+    host: "{{ .Release.Name }}-psql-cluster-rw"
+    port: 5432
+    database: keycloak
+    user: keycloak
     existingSecret: "{{ .Release.Name }}-psql-auth"
-    existingSecretHostKey: host
-    existingSecretPortKey: port
-    existingSecretUserKey: username
-    existingSecretDatabaseKey: database
     existingSecretPasswordKey: password
   tls:
     enabled: false
