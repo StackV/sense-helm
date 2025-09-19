@@ -117,7 +117,7 @@ keycloak:
   postgresql:
     enabled: false
   externalDatabase:
-    host: "{{ .Release.Name }}-sense-keycloak-postgres"
+    host: "{{ .Release.Name }}-{{ .Values.nameOverride }}-postgres"
     port: 5432
     database: keycloak
     user: keycloak
