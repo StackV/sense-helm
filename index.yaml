@@ -14,6 +14,22 @@ entries:
   sense-keycloak:
   - apiVersion: v2
     appVersion: 26.2.5
+    created: "2025-09-19T11:04:52.083433-04:00"
+    dependencies:
+    - name: keycloak
+      repository: https://charts.bitnami.com/bitnami
+      version: 24.7.4
+    - name: sense-commons
+      repository: https://stackv.github.io/sense-helm/
+      version: 1.x.x
+    description: Keycloak pre-configured for the SENSE Orchestrator.
+    digest: a89f3f41c7ffccc028d54cbe6e60dcf4100adf9f42e95255201fe541e1f3666e
+    name: sense-keycloak
+    urls:
+    - sense-keycloak-0.8.0.tgz
+    version: 0.8.0
+  - apiVersion: v2
+    appVersion: 26.2.5
     created: "2025-06-25T13:29:10.320891-04:00"
     dependencies:
     - name: keycloak
@@ -332,4 +348,4 @@ entries:
     urls:
     - sense-orchestrator-1.9.2.tgz
     version: 1.9.2
-generated: "2025-09-18T16:14:30.860429-04:00"
+generated: "2025-09-19T11:04:56.396718-04:00"
