@@ -2,5 +2,8 @@ dependencies:
 - name: keycloak
   repository: https://charts.bitnami.com/bitnami
   version: 24.7.4
-digest: sha256:5a1d0f5077b532ee8461a0507cd0f89de10ce9c87b2cb29cdf7c581473ec573f
-generated: "2025-09-18T16:21:50.588689-04:00"
+- name: sense-commons
+  repository: https://stackv.github.io/sense-helm/
+  version: 1.0.0
+digest: sha256:efe457dad7176dd3a58668320923c48ebd7b966e6e2d3061956155602cf7b9c4
+generated: "2025-09-19T07:41:11.042859-04:00"

@@ -17,6 +17,6 @@ dependencies:
   - name: keycloak
     version: 24.7.4
     repository: https://charts.bitnami.com/bitnami
-  # - name: sense-commons
-  #   version: 1.x.x
-  #   repository: https://stackv.github.io/sense-helm/
+  - name: sense-commons
+    version: 1.x.x
+    repository: https://stackv.github.io/sense-helm/

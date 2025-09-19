@@ -1,0 +1,123 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: postgres
+  name: {{ printf "%s-postgres" (include "common.names.fullname" .) }}
+spec:
+  selector:
+    matchLabels: {{ include "common.labels.matchLabels" . | nindent 6 }}
+      app.kubernetes.io/component: postgres
+  serviceName: {{ printf "%s-postgres" (include "common.names.fullname" .) }}
+  replicas: 1
+  template:
+    metadata:
+      labels: {{- include "common.labels.standard" . | nindent 8 }}
+        app.kubernetes.io/component: postgres
+      name: {{ printf "%s-postgres" (include "common.names.fullname" .) }}
+    spec:
+      containers:
+        - name: postgresql-db
+          image: postgres:16
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+              name: tcp-postgresql
+          volumeMounts:
+            - mountPath: /data
+              name: pg-data
+            - mountPath: /dev/shm
+              name: dshm
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: {{ tpl .Values.postgres.secret . }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: {{ tpl .Values.postgres.secret . }}
+            - name: PGDATA
+              value: /data/pgdata
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.database }}
+          {{- if .Values.postgres.probes.liveness.enabled }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - '-c'
+                - >-
+                  exec pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+                  -h 127.0.0.1 -p 5432
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          {{- else if .Values.postgres.probes.liveness.custom }}
+          livenessProbe: {{- include "common.render" (dict "value" .Values.postgres.probes.liveness.custom "context" $) | nindent 12 }}
+          {{- end }}    
+          {{- if .Values.postgres.probes.readiness.enabled }}
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - '-c'
+                - >-
+                  exec pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+                  -h 127.0.0.1 -p 5432
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5  
+          {{- else if .Values.postgres.probes.readiness.custom }}
+          livenessProbe: {{- include "common.render" (dict "value" .Values.postgres.probes.readiness.custom "context" $) | nindent 12 }}
+          {{- end }}        
+          {{- with .Values.postgres.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}   
+      restartPolicy: Always
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+        {{- if .Values.postgres.existingPVC }}
+        - name: pg-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgres.existingPVC }}
+        {{- end }}
+      {{- if .Values.postgres.affinity }}
+      affinity: {{- include "common.render" ( dict "value" .Values.postgres.affinity "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.postgres.nodeSelector }}
+      nodeSelector: {{- include "common.render" ( dict "value" .Values.postgres.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.postgres.tolerations }}
+      tolerations: {{- include "common.render" (dict "value" .Values.postgres.tolerations "context" .) | nindent 8 }}
+      {{- end }}
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  {{- if not .Values.postgres.existingPVC }}
+  volumeClaimTemplates:
+    - metadata:
+        name: pg-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+        {{- if .Values.postgres.pvcClass }}
+        storageClassName: {{.Values.postgres.pvcClass}} 
+        {{- end }}
+  {{- end }}
+  

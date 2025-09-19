@@ -18,20 +18,57 @@ global:
 ## @param namespaceOverride Override for the Helm namespace.
 namespaceOverride:
 
-## @section PostgreSQL Cluster Parameters
+## @section PostgreSQL Parameters
 ##
 #
-psql:
-  ## @param psql.enabled Whether to enable the included CNPG Cluster CRD.
+postgres:
+  ## @param postgres.enabled Whether to enable the included postgres deployment.
   enabled: true
-  ## @param psql.name Custom name for the CNPG Cluster.
-  name:
-  ## @param psql.username Username to create to own the cluster database.
-  username: keycloak
-  ## @param psql.database The cluster init database name.
+  ## @param postgres.database The cluster init database name.
   database: keycloak
-  ## @param psql.secret The secret with the database password specified.
+  ## @param postgres.secret The secret with the database password specified.
   secret: "{{ .Release.Name }}-psql-auth"
+  ## @param postgres.pvcClass PVC class for the PSQL persistence.
+  pvcClass: local-path
+  ## @param postgres.existingPVC Specify an existing PVC to use.
+  existingPVC:
+  #
+  probes:
+    startup:
+      ## @param postgres.probes.startup.enabled Whether to enable the default PSQL startup probe.
+      enabled: true
+      ## @param postgres.probes.startup.custom A custom override for the PSQL startup probe.
+      custom: {}
+    liveness:
+      ## @param postgres.probes.liveness.enabled Whether to enable the default PSQL liveness probe.
+      enabled: true
+      ## @param postgres.probes.liveness.custom A custom override for the PSQL liveness probe.
+      custom: {}
+    readiness:
+      ## @param postgres.probes.readiness.enabled Whether to enable the default PSQL readiness probe.
+      enabled: true
+      ## @param postgres.probes.readiness.custom A custom override for the PSQL readiness probe.
+      custom: {}
+  #
+  resources:
+    #
+    requests:
+      ## @param postgres.resources.requests.cpu PSQL CPU request.
+      cpu: 300m
+      ## @param postgres.resources.requests.memory PSQL memory request.
+      memory: 512Mi
+    #
+    limits:
+      ## @param postgres.resources.limits.cpu PSQL CPU limit.
+      cpu: 700m
+      ## @param postgres.resources.limits.memory PSQL memory limit.
+      memory: 2Gi
+  ## @param postgres.nodeSelector PSQL nodeSelector block.
+  nodeSelector: {}
+  ## @param postgres.tolerations PSQL tolerations block.
+  tolerations: []
+  ## @param postgres.affinity PSQL affinity block.
+  affinity: {}
 
 ## @section Custom Ingress Parameters
 ##
@@ -78,7 +115,7 @@ keycloak:
   postgresql:
     enabled: false
   externalDatabase:
-    host: "{{ .Release.Name }}-psql-cluster-rw"
+    host: "{{ .Release.Name }}-sense-keycloak-postgres"
     port: 5432
     database: keycloak
     user: keycloak
