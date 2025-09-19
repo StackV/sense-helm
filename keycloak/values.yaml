@@ -119,8 +119,8 @@ keycloak:
   externalDatabase:
     host: "{{ .Release.Name }}-{{ .Values.nameOverride }}-postgres"
     port: 5432
-    database: keycloak
-    user: keycloak
+    database: bitnami_keycloak
+    user: bn_keycloak
     existingSecret: "{{ .Release.Name }}-psql-auth"
     existingSecretPasswordKey: password
   tls:
