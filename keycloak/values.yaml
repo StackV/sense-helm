@@ -17,6 +17,8 @@ global:
 #
 ## @param namespaceOverride Override for the Helm namespace.
 namespaceOverride:
+## @param nameOverride Override for the Chart name.
+nameOverride: sense-kc
 
 ## @section PostgreSQL Parameters
 ##

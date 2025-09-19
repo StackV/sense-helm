@@ -35,33 +35,33 @@ If the ingress was disabled or is non-functional, you can access the web console
 
 ### Common Parameters
 
-| Name                | Description                      | Value |
-| ------------------- | -------------------------------- | ----- |
-| `namespaceOverride` | Override for the Helm namespace. | `nil` |
+| Name                | Description                      | Value      |
+| ------------------- | -------------------------------- | ---------- |
+| `namespaceOverride` | Override for the Helm namespace. | `nil`      |
+| `nameOverride`      | Override for the Chart name.     | `sense-kc` |
 
 ### PostgreSQL Parameters
 
-| Name                                 | Description                                                                          | Value                           |
-| ------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------- |
-| `postgres.enabled`                   | Whether to enable the included postgres deployment.                                  | `true`                          |
-| `postgres.database`                  | The cluster init database name.                                                      | `keycloak`                      |
-| `postgres.secret`                    | The secret with the database password specified.                                     | `{{ .Release.Name }}-psql-auth` |
-| `postgres.generatePVC`               | If set to true, will generate a dynamic PVC. If set to false, `pvcName` must be set. | `true`                          |
-| `postgres.pvcName`                   | Override for the PVC name.                                                           | `nil`                           |
-| `postgres.pvcClass`                  | PVC class for the PSQL persistence.                                                  | `local-path`                    |
-| `postgres.probes.startup.enabled`    | Whether to enable the default PSQL startup probe.                                    | `true`                          |
-| `postgres.probes.startup.custom`     | A custom override for the PSQL startup probe.                                        | `{}`                            |
-| `postgres.probes.liveness.enabled`   | Whether to enable the default PSQL liveness probe.                                   | `true`                          |
-| `postgres.probes.liveness.custom`    | A custom override for the PSQL liveness probe.                                       | `{}`                            |
-| `postgres.probes.readiness.enabled`  | Whether to enable the default PSQL readiness probe.                                  | `true`                          |
-| `postgres.probes.readiness.custom`   | A custom override for the PSQL readiness probe.                                      | `{}`                            |
-| `postgres.resources.requests.cpu`    | PSQL CPU request.                                                                    | `300m`                          |
-| `postgres.resources.requests.memory` | PSQL memory request.                                                                 | `512Mi`                         |
-| `postgres.resources.limits.cpu`      | PSQL CPU limit.                                                                      | `700m`                          |
-| `postgres.resources.limits.memory`   | PSQL memory limit.                                                                   | `2Gi`                           |
-| `postgres.nodeSelector`              | PSQL nodeSelector block.                                                             | `{}`                            |
-| `postgres.tolerations`               | PSQL tolerations block.                                                              | `[]`                            |
-| `postgres.affinity`                  | PSQL affinity block.                                                                 | `{}`                            |
+| Name                                 | Description                                         | Value                           |
+| ------------------------------------ | --------------------------------------------------- | ------------------------------- |
+| `postgres.enabled`                   | Whether to enable the included postgres deployment. | `true`                          |
+| `postgres.database`                  | The cluster init database name.                     | `keycloak`                      |
+| `postgres.secret`                    | The secret with the database password specified.    | `{{ .Release.Name }}-psql-auth` |
+| `postgres.pvcClass`                  | PVC class for the PSQL persistence.                 | `local-path`                    |
+| `postgres.existingPVC`               | Specify an existing PVC to use.                     | `nil`                           |
+| `postgres.probes.startup.enabled`    | Whether to enable the default PSQL startup probe.   | `true`                          |
+| `postgres.probes.startup.custom`     | A custom override for the PSQL startup probe.       | `{}`                            |
+| `postgres.probes.liveness.enabled`   | Whether to enable the default PSQL liveness probe.  | `true`                          |
+| `postgres.probes.liveness.custom`    | A custom override for the PSQL liveness probe.      | `{}`                            |
+| `postgres.probes.readiness.enabled`  | Whether to enable the default PSQL readiness probe. | `true`                          |
+| `postgres.probes.readiness.custom`   | A custom override for the PSQL readiness probe.     | `{}`                            |
+| `postgres.resources.requests.cpu`    | PSQL CPU request.                                   | `300m`                          |
+| `postgres.resources.requests.memory` | PSQL memory request.                                | `512Mi`                         |
+| `postgres.resources.limits.cpu`      | PSQL CPU limit.                                     | `700m`                          |
+| `postgres.resources.limits.memory`   | PSQL memory limit.                                  | `2Gi`                           |
+| `postgres.nodeSelector`              | PSQL nodeSelector block.                            | `{}`                            |
+| `postgres.tolerations`               | PSQL tolerations block.                             | `[]`                            |
+| `postgres.affinity`                  | PSQL affinity block.                                | `{}`                            |
 
 ### Custom Ingress Parameters
 
