@@ -8,6 +8,9 @@ The SENSE-O deployment is container based and both Docker Stack or Kubernetes ca
 
 As a practical example of how to use these charts, let's assume the following:
 
+> [!WARNING]
+> The following information is outdated and should only be used as a reference. For current documentation please visit https://stackv.github.io/sense-docs/docs/category/installation.
+
 > This tutorial was written on 2025-04-05, using chart versions OC:1.11.0 and KC:0.6.4 .
 
 - We are deploying to a cluster with a storage provisioner and ingress controller set up, as well as a cert-manager `ClusterIssuer` named `le-sense-cluster`.

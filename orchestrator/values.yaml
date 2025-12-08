@@ -27,7 +27,7 @@ extraObjects: []
 image:
   ## @param image.repository Orchestrator image.
   repository: virnao/sense-orchestrator
-  ## @param image.tag Image tag to pull.
+  ## @param image.tag Image tag to pull. Defaults to the chart's `appVersion` if unset.
   tag:
   ## @param image.pullSecrets Secrets for any private docker registry access.
   pullSecrets: []
@@ -57,15 +57,15 @@ resources:
   #
   requests:
     ## @param resources.requests.cpu Orchestrator CPU request.
-    cpu: 2000m
+    cpu: 1500m
     ## @param resources.requests.memory Orchestrator memory request.
-    memory: 8Gi
+    memory: 6Gi
   #
   limits:
     ## @param resources.limits.cpu Orchestrator CPU limit.
-    cpu: 8000m
+    cpu: 6000m
     ## @param resources.limits.memory Orchestrator memory limit.
-    memory: 32Gi
+    memory: 24Gi
 #
 service:
   ## @param service.type Orchestrator service type.
@@ -123,11 +123,11 @@ affinity: {}
 ingress:
   ## @param ingress.enabled Whether to enable the Ingress resource.
   enabled: true
-  ## @param ingress.className Ingress class override.
+  ## @param ingress.className Ingress class override. Defaults to the cluster's default ingress class if unset.
   className:
-  ## @param ingress.hostname Explicit host to be used for the ingress. Defaults to `domain` if unset.
+  ## @param ingress.hostname Explicit host to be used for the ingress. Defaults to the value of `global.domain` if unset.
   hostname:
-  ## @param ingress.annotations Ingress annotations.
+  ## @param ingress.annotations Any optional annotations for the Ingress.
   annotations:
   ## @param ingress.tlsSecret TLS secret name for ingress termination.
   tlsSecret:
@@ -135,9 +135,9 @@ ingress:
 certmanager:
   ##@param certmanager.enabled Whether to enable the custom cert-manager Certificate resource.
   enabled: false
-  ## @param certmanager.annotations Any optional annotations for the certificate.
+  ## @param certmanager.annotations Any optional annotations for the Certificate.
   annotations:
-  ## @param certmanager.commonName CN for the certificate. Defaults to `global.domain` if unset.
+  ## @param certmanager.commonName CN for the certificate. Defaults to the value of `global.domain` if unset.
   commonName:
   ## @param certmanager.dnsNames Optional list of DNS names, uris, emails, or IP addresses. Defaults to a list with `global.domain` if unset.
   dnsNames:
@@ -147,7 +147,7 @@ certmanager:
     group: cert-manager.io
     ## @param certmanager.issuerRef.kind The kind of issuer backing this request.
     kind: Issuer
-    ## @param certmanager.issuerRef.name Name of the Issuer resource. If the integrated issuer is enabled, leave this blank.
+    ## @param certmanager.issuerRef.name Name of the Issuer resource. If the integrated Issuer is enabled, leave this blank to use its auto-generated name.
     name:
   #
   privateKey:
@@ -165,7 +165,7 @@ certmanager:
 issuer:
   ## @param issuer.enabled Whether to enable the integrated cert-manager Issuer.
   enabled: false
-  ## @param issuer.name Overrride for the Issuer name.
+  ## @param issuer.name Custom name for the Issuer. Defaults to a chart-generated name (such as `{release name}-sense-issuer` ) if unset.
   name:
   ## @param issuer.privateKeySecret Overrride for the Issuer private key secret name.
   privateKeySecret:
@@ -184,7 +184,7 @@ mysql:
   passwordKey: mysql-password
   ## @param mysql.generatePVC If set to true, will generate a dynamic PVC. If set to false, pvcName should almost always be set.
   generatePVC: true
-  ## @param mysql.pvcName Override for the PVC name.
+  ## @param mysql.pvcName Override for the PVC name. Defaults to a chart-generated name (such as `{release name}-sense-mysql-pvc` ) if unset.
   pvcName:
   ## @param mysql.pvcClass PVC class for the mysql persistence.
   pvcClass: local-path

@@ -3,6 +3,11 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.14.8
+
+- Clean up README, point to new documentation site.
+- Specify default values for more values fields.
+
 ## 1.14.7
 
 - Assorted stateful set fixes.

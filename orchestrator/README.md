@@ -1,13 +1,10 @@
-
 # SENSE Orchestrator
 
-This chart installs the SENSE Orchestrator on a K8s cluster, alongside an embedded MySQL server.
+This chart installs the SENSE Orchestrator on a K8s cluster, alongside an embedded MySQL server. For more detailed instructions of how this chart can be used, visit https://stackv.github.io/sense-docs/docs/installation/kubernetes.
 
 ## Configuration
 
-In most cases you should be fine reviewing the variables established below from the full `values.yaml` and copying or templating the `override.template.yaml` file as a base. You can also create your own override by copying from `values.yaml`. Either way, you should create a `override.yaml`, and configure (at a minimum) the two domain variables: `global.domain` and `global.keycloak` variables.
-
-Depending on your cluster you will likely need to adjust the persistence variables under `mysql`, as well as the configuration of the Ingress and any TLS credentials.
+In most cases you should be fine reviewing the variables established below from the full `values.yaml` as a base. Copy this to a new file, `override.values.yaml`, and from there you can remove any unneeded fields that you plan on leaving to their default values.
 
 ### Secrets
 
@@ -19,7 +16,7 @@ The orchestrator relies on a set of secrets that will need to be present before 
 
 ## Installation
 
-After creating the required secrets and configuring your override, run `helm install senseo . [-f values.yaml] -f override.yaml`.
+After creating the required secrets and configuring your override, run `helm install senseo . -f override.values.yaml`.
 
 ## Usage
 
@@ -47,7 +44,7 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 | Name                               | Description                                                                                                                                   | Value                       |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
 | `image.repository`                 | Orchestrator image.                                                                                                                           | `virnao/sense-orchestrator` |
-| `image.tag`                        | Image tag to pull.                                                                                                                            | `nil`                       |
+| `image.tag`                        | Image tag to pull. Defaults to the chart's `appVersion` if unset.                                                                             | `nil`                       |
 | `image.pullSecrets`                | Secrets for any private docker registry access.                                                                                               | `[]`                        |
 | `auth.clientSecret`                | The secret containing the Keycloak connection details.                                                                                        | `sense-auth-cred`           |
 | `init.enabled`                     | Whether to enable the built-in init containers.                                                                                               | `true`                      |
@@ -55,10 +52,10 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 | `init.migration.repository`        | DB migration tooling image.                                                                                                                   | `virnao/sense-db-migration` |
 | `init.migration.tag`               | An explicit override for the migration tooling tag.                                                                                           | `nil`                       |
 | `java.memory`                      | JVM Memory maximum.                                                                                                                           | `8G`                        |
-| `resources.requests.cpu`           | Orchestrator CPU request.                                                                                                                     | `2000m`                     |
-| `resources.requests.memory`        | Orchestrator memory request.                                                                                                                  | `8Gi`                       |
-| `resources.limits.cpu`             | Orchestrator CPU limit.                                                                                                                       | `8000m`                     |
-| `resources.limits.memory`          | Orchestrator memory limit.                                                                                                                    | `32Gi`                      |
+| `resources.requests.cpu`           | Orchestrator CPU request.                                                                                                                     | `1500m`                     |
+| `resources.requests.memory`        | Orchestrator memory request.                                                                                                                  | `6Gi`                       |
+| `resources.limits.cpu`             | Orchestrator CPU limit.                                                                                                                       | `6000m`                     |
+| `resources.limits.memory`          | Orchestrator memory limit.                                                                                                                    | `24Gi`                      |
 | `service.type`                     | Orchestrator service type.                                                                                                                    | `ClusterIP`                 |
 | `service.ports.http`               | Orchestrator HTTP port.                                                                                                                       | `8080`                      |
 | `service.ports.https`              | Orchestrator HTTPS port.                                                                                                                      | `8443`                      |
@@ -80,53 +77,53 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 
 ### Network Parameters
 
-| Name                               | Description                                                                                                  | Value                                            |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
-| `ingress.enabled`                  | Whether to enable the Ingress resource.                                                                      | `true`                                           |
-| `ingress.className`                | Ingress class override.                                                                                      | `nil`                                            |
-| `ingress.hostname`                 | Explicit host to be used for the ingress. Defaults to `domain` if unset.                                     | `nil`                                            |
-| `ingress.annotations`              | Ingress annotations.                                                                                         | `nil`                                            |
-| `ingress.tlsSecret`                | TLS secret name for ingress termination.                                                                     | `nil`                                            |
-| `certmanager.enabled`              | Whether to enable the custom cert-manager Certificate resource.                                              | `false`                                          |
-| `certmanager.annotations`          | Any optional annotations for the certificate.                                                                | `nil`                                            |
-| `certmanager.commonName`           | CN for the certificate. Defaults to `global.domain` if unset.                                                | `nil`                                            |
-| `certmanager.dnsNames`             | Optional list of DNS names, uris, emails, or IP addresses. Defaults to a list with `global.domain` if unset. | `nil`                                            |
-| `certmanager.issuerRef.group`      | The backing issuer group.                                                                                    | `cert-manager.io`                                |
-| `certmanager.issuerRef.kind`       | The kind of issuer backing this request.                                                                     | `Issuer`                                         |
-| `certmanager.issuerRef.name`       | Name of the Issuer resource. If the integrated issuer is enabled, leave this blank.                          | `nil`                                            |
-| `certmanager.privateKey.algorithm` | The private key's encryption algorithm.                                                                      | `RSA`                                            |
-| `certmanager.privateKey.encoding`  | The private key's encoding.                                                                                  | `PKCS1`                                          |
-| `certmanager.privateKey.size`      | The private key's size.                                                                                      | `2048`                                           |
-| `certmanager.duration`             | Lifetime of the certificate.                                                                                 | `2160h`                                          |
-| `certmanager.renewBefore`          | Renewal timestamp for the certificate.                                                                       | `360h`                                           |
-| `issuer.enabled`                   | Whether to enable the integrated cert-manager Issuer.                                                        | `false`                                          |
-| `issuer.name`                      | Overrride for the Issuer name.                                                                               | `nil`                                            |
-| `issuer.privateKeySecret`          | Overrride for the Issuer private key secret name.                                                            | `nil`                                            |
-| `issuer.email`                     | Email metadata for the Issuer.                                                                               | `example@gmail.com`                              |
-| `issuer.server`                    | Issuing server.                                                                                              | `https://acme-v02.api.letsencrypt.org/directory` |
-| `issuer.solvers`                   | Override for the Issuer solvers.                                                                             | `[]`                                             |
+| Name                               | Description                                                                                                        | Value                                            |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
+| `ingress.enabled`                  | Whether to enable the Ingress resource.                                                                            | `true`                                           |
+| `ingress.className`                | Ingress class override. Defaults to the cluster's default ingress class if unset.                                  | `nil`                                            |
+| `ingress.hostname`                 | Explicit host to be used for the ingress. Defaults to the value of `global.domain` if unset.                       | `nil`                                            |
+| `ingress.annotations`              | Any optional annotations for the Ingress.                                                                          | `nil`                                            |
+| `ingress.tlsSecret`                | TLS secret name for ingress termination.                                                                           | `nil`                                            |
+| `certmanager.enabled`              | Whether to enable the custom cert-manager Certificate resource.                                                    | `false`                                          |
+| `certmanager.annotations`          | Any optional annotations for the Certificate.                                                                      | `nil`                                            |
+| `certmanager.commonName`           | CN for the certificate. Defaults to the value of `global.domain` if unset.                                         | `nil`                                            |
+| `certmanager.dnsNames`             | Optional list of DNS names, uris, emails, or IP addresses. Defaults to a list with `global.domain` if unset.       | `nil`                                            |
+| `certmanager.issuerRef.group`      | The backing issuer group.                                                                                          | `cert-manager.io`                                |
+| `certmanager.issuerRef.kind`       | The kind of issuer backing this request.                                                                           | `Issuer`                                         |
+| `certmanager.issuerRef.name`       | Name of the Issuer resource. If the integrated Issuer is enabled, leave this blank to use its auto-generated name. | `nil`                                            |
+| `certmanager.privateKey.algorithm` | The private key's encryption algorithm.                                                                            | `RSA`                                            |
+| `certmanager.privateKey.encoding`  | The private key's encoding.                                                                                        | `PKCS1`                                          |
+| `certmanager.privateKey.size`      | The private key's size.                                                                                            | `2048`                                           |
+| `certmanager.duration`             | Lifetime of the certificate.                                                                                       | `2160h`                                          |
+| `certmanager.renewBefore`          | Renewal timestamp for the certificate.                                                                             | `360h`                                           |
+| `issuer.enabled`                   | Whether to enable the integrated cert-manager Issuer.                                                              | `false`                                          |
+| `issuer.name`                      | Custom name for the Issuer. Defaults to a chart-generated name (such as `{release name}-sense-issuer` ) if unset.  | `nil`                                            |
+| `issuer.privateKeySecret`          | Overrride for the Issuer private key secret name.                                                                  | `nil`                                            |
+| `issuer.email`                     | Email metadata for the Issuer.                                                                                     | `example@gmail.com`                              |
+| `issuer.server`                    | Issuing server.                                                                                                    | `https://acme-v02.api.letsencrypt.org/directory` |
+| `issuer.solvers`                   | Override for the Issuer solvers.                                                                                   | `[]`                                             |
 
 ### MySQL Parameters
 
-| Name                              | Description                                                                                        | Value            |
-| --------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------- |
-| `mysql.passwordKey`               | Key of the password for the mysql database, found in `.global.credSecret`.                         | `mysql-password` |
-| `mysql.generatePVC`               | If set to true, will generate a dynamic PVC. If set to false, pvcName should almost always be set. | `true`           |
-| `mysql.pvcName`                   | Override for the PVC name.                                                                         | `nil`            |
-| `mysql.pvcClass`                  | PVC class for the mysql persistence.                                                               | `local-path`     |
-| `mysql.resources.requests.cpu`    | MySQL CPU request.                                                                                 | `300m`           |
-| `mysql.resources.requests.memory` | MySQL memory request.                                                                              | `1Gi`            |
-| `mysql.resources.limits.cpu`      | MySQL CPU limit.                                                                                   | `1000m`          |
-| `mysql.resources.limits.memory`   | MySQL memory limit.                                                                                | `4Gi`            |
-| `mysql.probes.startup.enabled`    | Whether to enable the default MySQL startup probe.                                                 | `true`           |
-| `mysql.probes.startup.custom`     | A custom override for the MySQL startup probe.                                                     | `{}`             |
-| `mysql.probes.liveness.enabled`   | Whether to enable the default MySQL liveness probe.                                                | `true`           |
-| `mysql.probes.liveness.custom`    | A custom override for the MySQL liveness probe.                                                    | `{}`             |
-| `mysql.probes.readiness.enabled`  | Whether to enable the default MySQL readiness probe.                                               | `true`           |
-| `mysql.probes.readiness.custom`   | A custom override for the MySQL readiness probe.                                                   | `{}`             |
-| `mysql.nodeSelector`              | MySQL nodeSelector block.                                                                          | `{}`             |
-| `mysql.tolerations`               | MySQL tolerations block.                                                                           | `[]`             |
-| `mysql.affinity`                  | MySQL affinity block.                                                                              | `{}`             |
+| Name                              | Description                                                                                                         | Value            |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| `mysql.passwordKey`               | Key of the password for the mysql database, found in `.global.credSecret`.                                          | `mysql-password` |
+| `mysql.generatePVC`               | If set to true, will generate a dynamic PVC. If set to false, pvcName should almost always be set.                  | `true`           |
+| `mysql.pvcName`                   | Override for the PVC name. Defaults to a chart-generated name (such as `{release name}-sense-mysql-pvc` ) if unset. | `nil`            |
+| `mysql.pvcClass`                  | PVC class for the mysql persistence.                                                                                | `local-path`     |
+| `mysql.resources.requests.cpu`    | MySQL CPU request.                                                                                                  | `300m`           |
+| `mysql.resources.requests.memory` | MySQL memory request.                                                                                               | `1Gi`            |
+| `mysql.resources.limits.cpu`      | MySQL CPU limit.                                                                                                    | `1000m`          |
+| `mysql.resources.limits.memory`   | MySQL memory limit.                                                                                                 | `4Gi`            |
+| `mysql.probes.startup.enabled`    | Whether to enable the default MySQL startup probe.                                                                  | `true`           |
+| `mysql.probes.startup.custom`     | A custom override for the MySQL startup probe.                                                                      | `{}`             |
+| `mysql.probes.liveness.enabled`   | Whether to enable the default MySQL liveness probe.                                                                 | `true`           |
+| `mysql.probes.liveness.custom`    | A custom override for the MySQL liveness probe.                                                                     | `{}`             |
+| `mysql.probes.readiness.enabled`  | Whether to enable the default MySQL readiness probe.                                                                | `true`           |
+| `mysql.probes.readiness.custom`   | A custom override for the MySQL readiness probe.                                                                    | `{}`             |
+| `mysql.nodeSelector`              | MySQL nodeSelector block.                                                                                           | `{}`             |
+| `mysql.tolerations`               | MySQL tolerations block.                                                                                            | `[]`             |
+| `mysql.affinity`                  | MySQL affinity block.                                                                                               | `{}`             |
 
 ### SMTP Parameters
 
