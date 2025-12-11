@@ -15,7 +15,7 @@ spec:
   resources:
     requests:
       storage: 20Gi
-  {{- if .Values.global.mode "test" }}
+  {{- if (eq .Values.global.mode "test") }}
   {{- else }}
   storageClassName: {{.Values.mysql.pvcClass}}
   {{- end }}
