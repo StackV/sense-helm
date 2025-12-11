@@ -15,8 +15,8 @@ spec:
   resources:
     requests:
       storage: 20Gi
-  {{- if or (eq .Values.global.mode "test") (.Values.mysql.pvcClass) }}
+  {{- if .Values.global.mode "test" }}
   {{- else }}
-  storageClassName: {{.Values.mysql.pvcClass}} # rook-ceph-block-east
+  storageClassName: {{.Values.mysql.pvcClass}}
   {{- end }}
 {{- end }}
