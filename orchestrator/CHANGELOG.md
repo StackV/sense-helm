@@ -3,6 +3,10 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.14.11
+
+- Fix bug with Argo type destructuring.
+
 ## 1.14.10
 
 - Fix bug with specifying custom PVC storage class.

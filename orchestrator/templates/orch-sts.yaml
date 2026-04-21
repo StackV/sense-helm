@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        stackv/tag: {{ .Values.image.tag | default .Chart.AppVersion }}
+        stackv/tag: {{ (.Values.image.tag | default .Chart.AppVersion) | quote }}
         link.argocd.argoproj.io/external-link: https://{{ .Values.ingress.hostname | default .Values.global.domain }}/StackV-web/portal/
       labels: {{- include "common.labels" . | nindent 8 }}
         app.kubernetes.io/component: orchestrator
