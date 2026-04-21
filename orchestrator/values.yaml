@@ -210,7 +210,7 @@ mysql:
       custom: {}
     liveness:
       ## @param mysql.probes.liveness.enabled Whether to enable the default MySQL liveness probe.
-      enabled: true
+      enabled: false
       ## @param mysql.probes.liveness.custom A custom override for the MySQL liveness probe.
       custom: {}
     readiness:
