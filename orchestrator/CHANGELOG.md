@@ -3,6 +3,11 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.15.0
+
+- Fix default mysql liveness probe definition.
+- Establish tested baseline.
+
 ## 1.14.11
 
 - Fix bug with Argo type destructuring.

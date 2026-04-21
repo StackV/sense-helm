@@ -36,10 +36,10 @@ spec:
           {{- if .Values.mysql.probes.liveness.enabled }}
           livenessProbe:
             exec:
-              command: ["mysqladmin", "ping"]
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
+              command:
+                - "bash"
+                - "-c"
+                - "mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD ping &> /dev/null"
           {{- else if .Values.mysql.probes.liveness.custom }}
           livenessProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.liveness.custom "context" $) | nindent 12 }}
           {{- end }}
