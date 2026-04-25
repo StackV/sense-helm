@@ -4,7 +4,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   namespace: {{ include "common.names.namespace" . | quote }}
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
+  labels: {{ include "common.labels.standard" . | nindent 4 }}
     app.kubernetes.io/component: keycloak
   name: {{ default (printf "%s-issuer" .Release.Name) .Values.issuer.name  }}
 spec:
@@ -16,10 +16,10 @@ spec:
     server: {{ .Values.issuer.server }}
     solvers:
     {{- if .Values.issuer.solvers }}
-        {{- include "common.tplvalues.render" (dict "value" .Values.issuer.solvers "context" $) | nindent 8 }}
+        {{ include "common.tplvalues.render" (dict "value" .Values.issuer.solvers "context" $) | nindent 8 }}
     {{- else }}
-        - http01:
-            ingress:
-                class: traefik
+      - http01:
+          ingress:
+            class: traefik
     {{- end }}
 {{- end }}

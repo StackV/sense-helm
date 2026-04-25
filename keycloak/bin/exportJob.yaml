@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: keycloak-realm-export
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: quay-cred
+      containers:
+        - name: keycloak-export
+          image: quay.io/virnao/sense-keycloak:next
+          command:
+            - /opt/keycloak/bin/kc.sh
+            - export
+            - --dir
+            - /export
+            - --verbose
+            #            - --optimized
+            - --realm
+            - StackV
+          env:
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL_HOST
+              value: kc-next-postgresql
+            - name: KC_DB_URL_PORT
+              value: "5432"
+            - name: KC_DB_URL_DATABASE
+              value: keycloak
+            - name: KC_DB_USERNAME
+              value: keycloak
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-psql-auth
+                  key: password
+          volumeMounts:
+            - name: export-volume
+              mountPath: /export
+      volumes:
+        - name: export-volume
+          persistentVolumeClaim:
+            claimName: keycloak-export-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keycloak-export-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 256Mi

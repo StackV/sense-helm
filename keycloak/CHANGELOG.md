@@ -3,6 +3,11 @@
 This file documents all notable changes to StackV's pre-configured Keycloak Helm Chart.
 The release numbering uses [semantic versioning](http://semver.org).
 
+## 1.0.0
+
+- Major rewrite to leverage public Keycloak charting, and move away from the legacy Bitnami Keycloak chart.
+- Add some additional support for deeper configuration, and provide better foundation for future expansion or review.
+
 ## 0.8.0
 
 - Replace deprecated Bitnami postgresql subchart with direct provisioning.

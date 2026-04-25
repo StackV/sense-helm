@@ -34,7 +34,7 @@ spec:
         - name: "{{ $orchName }}-db-init-frontend"
           image: "{{ .Values.init.migration.repository }}:{{ splitList "@" (default .Chart.AppVersion (default .Values.image.tag .Values.init.migration.tag)) | first }}-frontend"
           imagePullPolicy: Always
-          args: ["deploy", "-t", "db:mysql://$(SQITCH_USER):$(SQITCH_PASSWORD)@$(SQITCH_DB_HOST)/frontend"]
+          args: [ "deploy", "-t", "db:mysql://$(SQITCH_USER):$(SQITCH_PASSWORD)@$(SQITCH_DB_HOST)/frontend" ]
           env:
             - name: SQITCH_USER
               value: "root"
@@ -48,7 +48,7 @@ spec:
         - name: "{{ $orchName }}-db-init"
           image: "{{ .Values.init.migration.repository }}:{{ splitList "@" (default .Chart.AppVersion (default .Values.image.tag .Values.init.migration.tag)) | first }}"
           imagePullPolicy: Always
-          args: ["deploy", "-t", "db:mysql://$(SQITCH_USER):$(SQITCH_PASSWORD)@$(SQITCH_DB_HOST)/rainsdb"]
+          args: [ "deploy", "-t", "db:mysql://$(SQITCH_USER):$(SQITCH_PASSWORD)@$(SQITCH_DB_HOST)/rainsdb" ]
           env:
             - name: SQITCH_USER
               value: "root"
@@ -65,10 +65,10 @@ spec:
         - image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
           imagePullPolicy: Always
           command:
-          - sh
-          - -c
-          - |
-            /bin/wait-for-it.sh {{ $mysqlName }}:3306 -t 600 -s -- /bin/startup.sh
+            - sh
+            - -c
+            - |
+              /bin/wait-for-it.sh {{ $mysqlName }}:3306 -t 600 -s -- /bin/startup.sh
           env:
             - name: KC_DOMAIN
               valueFrom:
@@ -115,7 +115,7 @@ spec:
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
-          {{- end }}    
+          {{- end }}
           {{- if .Values.probes.startup.enabled }}
           startupProbe:
             httpGet:
@@ -148,7 +148,7 @@ spec:
             initialDelaySeconds: 30
           {{- else if .Values.probes.readiness.custom }}
           readinessProbe: {{- include "common.render" (dict "value" .Values.probes.readiness.custom "context" $) | nindent 12 }}
-          {{- end }}        
+          {{- end }}
           name: {{ $orchName }}
           ports:
             - containerPort: 8443
