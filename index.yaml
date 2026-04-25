@@ -13,6 +13,28 @@ entries:
     version: 1.0.0
   sense-keycloak:
   - apiVersion: v2
+    appVersion: 26.6.1
+    created: "2026-04-25T14:56:19.710972-04:00"
+    dependencies:
+    - condition: keycloakx.enabled
+      name: keycloakx
+      repository: https://codecentric.github.io/helm-charts
+      version: 7.1.11
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.6.1
+    - name: sense-commons
+      repository: https://stackv.github.io/sense-helm/
+      version: 1.x.x
+    description: Keycloak pre-configured for the SENSE Orchestrator.
+    digest: 0b9829f6379a644d9495294df8feaa2c03447f377379f3ff2fbefea0455eca5b
+    icon: https://www.keycloak.org/resources/images/icon.svg
+    name: sense-keycloak
+    urls:
+    - sense-keycloak-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
     appVersion: 26.2.5
     created: "2025-09-19T11:04:52.083433-04:00"
     dependencies:
@@ -408,4 +430,4 @@ entries:
     urls:
     - sense-orchestrator-1.9.2.tgz
     version: 1.9.2
-generated: "2026-04-21T09:20:45.764265-04:00"
+generated: "2026-04-25T14:56:24.698893-04:00"
