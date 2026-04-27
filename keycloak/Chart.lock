@@ -8,5 +8,5 @@ dependencies:
 - name: sense-commons
   repository: https://stackv.github.io/sense-helm/
   version: 1.0.0
-digest: sha256:ca74161981e3436dd22d2447a99d6138b753b6a940c7630f15997265a7c28893
-generated: "2026-04-24T18:02:38.89006-04:00"
+digest: sha256:4073536447dca44cd692d2cff8a1a4b5884f6d4b15124dfedfe34cd5cda314db
+generated: "2026-04-25T14:55:49.509512-04:00"
