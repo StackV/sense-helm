@@ -41,6 +41,11 @@ postgresql:
   auth:
     database: keycloak
     username: keycloak
+    ## @param postgresql.auth.existingSecret Secret used to initialize the postgres user passwords.
+    ## Override-required: this is a placeholder. keycloakx reads the same secret via
+    ## `keycloakx.database.postgres.existingSecret` without templating, so the two cannot be
+    ## defaulted per release and must be kept equal by hand. `bin/create_secrets.sh` creates
+    ## `{{ .Release.Name }}-psql-auth`; override both to that name (see the override-* examples).
     existingSecret: keycloak-psql-auth
     secretKeys:
       adminPasswordKey: admin-password
@@ -102,6 +107,10 @@ keycloakx:
     ## @skip keycloakx.database.postgres
     vendor: postgres
     ## @param keycloakx.database.postgres.hostname Database address.
+    ## Override-required: this is a placeholder. It must equal the postgres Service name, which
+    ## defaults to `{{ .Release.Name }}-postgresql`. keycloakx consumes this value without
+    ## templating, so it cannot be defaulted per release -- override it per deployment (the
+    ## default `keycloak-postgresql` only resolves when the release is literally named `keycloak`).
     hostname: keycloak-postgresql
     ## @param keycloakx.database.postgres.port Database port.
     port: 5432
@@ -110,6 +119,7 @@ keycloakx:
     ## @param keycloakx.database.postgres.user Database user.
     user: keycloak
     ## @param keycloakx.database.postgres.password Database password.
+    ## Override-required: must equal `postgresql.auth.existingSecret` above. See the note there.
     existingSecret: keycloak-psql-auth
     existingSecretKey: password
 
