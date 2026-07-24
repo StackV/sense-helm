@@ -1,7 +1,13 @@
 # Changelog
 
-This file documents all notable changes to StackV's pre-configured Keycloak Helm Chart.
-The release numbering uses [semantic versioning](http://semver.org).
+This file documents all notable changes to StackV's pre-configured Keycloak Helm Chart. The release numbering
+uses [semantic versioning](http://semver.org).
+
+## 1.0.1
+
+- Pin the PostgreSQL subchart image by digest to avoid floating digest.
+    - Note: verify the running instance's major version before ever changing this digest. See the comments in
+      `values.yaml`.
 
 ## 1.0.0
 

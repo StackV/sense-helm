@@ -26,6 +26,17 @@ nameOverride:
 postgresql:
   ## @param postgresql.enabled Whether to enable the included postgres deployment.
   enabled: true
+  #
+  ## Since the Bitnami catalog restructure (August 2025), `bitnami/postgresql` have published only a
+  ## floating `latest` tag.
+  ##
+  ## Update Warning: confirm the major version of the running instance (`SELECT version()`,
+  ## or read PG_VERSION from the data volume) and only ever pin a digest of that same major.
+  ## Pointing an existing data directory at a different major will refuse to start and needs a
+  ## pg_dump/restore instead.
+  image:
+    ## @param postgresql.image.digest Pinned digest for the PostgreSQL image. Overrides the subchart's floating `latest` tag.
+    digest: sha256:db2312d9b243afa8c3b3f5496e478d17d0dff9791d06f3b93b9567abd86ae92f
   ## @param postgresql.auth.database The cluster init database name.
   auth:
     database: keycloak
@@ -102,7 +113,9 @@ keycloakx:
     existingSecret: keycloak-psql-auth
     existingSecretKey: password
 
-  existingAuthSecret: keycloak-auth
+  ## @param keycloakx.existingAuthSecret Name of an existing secret holding the bootstrap admin credentials (key `admin-password`).
+  ## Optional. If unset, defaults to `{{ .Release.Name }}-auth`.
+  existingAuthSecret:
   command:
     - "/opt/keycloak/bin/kc.sh"
     - "--verbose"
@@ -115,7 +128,7 @@ keycloakx:
     - name: KC_BOOTSTRAP_ADMIN_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: {{ .Values.existingAuthSecret }}
+          name: {{ default (printf "%s-auth" .Release.Name) .Values.existingAuthSecret }}
           key: admin-password
     - name: KC_PROXY_HEADERS
       value: xforwarded
