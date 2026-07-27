@@ -14,7 +14,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: {{ .Values.mysql.pvcSize }}
   {{- if (eq .Values.global.mode "test") }}
   {{- else }}
   storageClassName: {{.Values.mysql.pvcClass}}

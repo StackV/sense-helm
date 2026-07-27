@@ -18,16 +18,16 @@ spec:
       protocol: TCP
       targetPort: app-http
       name: http
-    {{- if .Values.service.ports.debug.enabled }}            
-    - port: 9990
+    {{- if .Values.service.ports.debug.enabled }}
+    - port: {{ .Values.service.ports.debug.consoleHttp }}
       protocol: TCP
       targetPort: console-http
       name: console-http
-    - port: 9993
+    - port: {{ .Values.service.ports.debug.consoleHttps }}
       protocol: TCP
       targetPort: console-https
       name: console-https
-    - port: 8787
+    - port: {{ .Values.service.ports.debug.debugger }}
       protocol: TCP
       targetPort: app-debug
       name: debug

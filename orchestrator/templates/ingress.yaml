@@ -5,7 +5,7 @@ kind: Ingress
 metadata:
   namespace: {{ include "common.namespace" . | quote }}
   {{- if or .Values.ingress.annotations .Values.issuer.enabled }}
-  annotations: 
+  annotations:
   {{- if .Values.ingress.annotations }}
   {{- include "common.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
   {{- end }}
@@ -28,11 +28,11 @@ spec:
               service:
                 name: {{ printf "%s-orch" (include "common.name" .) }}
                 port:
-                  number: 8080
+                  number: {{ .Values.service.ports.http }}
             path: /
             pathType: Prefix
   tls:
     - hosts:
         - {{ .Values.ingress.hostname | default .Values.global.domain }}
-      secretName: {{ printf "%s-ingress-secret" (include "common.name" .) }}
+      secretName: {{ include "common.tlsSecret" . }}
 {{- end }}

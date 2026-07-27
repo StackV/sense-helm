@@ -1,7 +1,31 @@
 # Changelog
 
-This file documents all notable changes to StackV's main Orchestrator Helm Chart.
-The release numbering uses [semantic versioning](http://semver.org).
+This file documents all notable changes to StackV's main Orchestrator Helm Chart. The release numbering
+uses [semantic versioning](http://semver.org).
+
+## 2.0.0
+
+- **Breaking:** Upgrade the bundled MySQL server from 5.7 to 9.7 (LTS). Dump and reload onto a fresh volume if required;
+  see the migration steps in `../.claude/mysql_migrate.md`. The existing PVC remains due and is retained as a rollback.
+- **Breaking:** Replace Sqitch with Flyway for database migrations.
+- **Breaking:** Drop the separate `frontend` migration init container. The `frontend` schema is now self-provisioned by
+  the application at boot, so only the `rainsdb` migration container remains.
+- The MySQL image is now configurable via `mysql.image.repository`, `mysql.image.tag` and `mysql.image.pullPolicy`.
+- Fix the MySQL startup probe.
+- Extend the MySQL liveness and readiness probes.
+- MySQL probes no longer pass the root password on the command line, where it was visible in the container's process
+  table.
+- Add `mysql.terminationGracePeriodSeconds` (default 120) so InnoDB can shut down cleanly instead of forcing crash
+  recovery on the next start.
+- Add a `checksum/config` annotation to the MySQL pod, so changes to `db.cnf` actually roll the StatefulSet.
+- Add `mysql.binlog.*`. Binary logging is on by default from MySQL 8.0; on a single non-replicated node it only consumes
+  volume space, so it is disabled by default here.
+- Add `mysql.pvcSize`, previously erroneously hardcoded.
+- Fix `ingress.tlsSecret` name being ignored.
+- Fix `service.ports.debug.consoleHttp`, `consoleHttps` and `debugger` ports being ignored.
+- Fix Ingress backend port so it follows `service.ports.http` instead of hardcoded.
+- Add `init.migration.connectRetries` (default 60) so the migration container waits out MySQL's first boot rather than
+  relying on init container restarts.
 
 ## 1.15.0
 
@@ -41,7 +65,9 @@ The release numbering uses [semantic versioning](http://semver.org).
 
 ## 1.14.0
 
-- **Breaking**: The KC auth secret will need to be updated for this version. For ease of transitioning between KC providers and secret integrity, the `auth.host` value has been moved into the `host` key of the KC auth secret. See `bin/create_secrets.sh` for an example.
+- **Breaking**: The KC auth secret will need to be updated for this version. For ease of transitioning between KC
+  providers and secret integrity, the `auth.host` value has been moved into the `host` key of the KC auth secret. See
+  `bin/create_secrets.sh` for an example.
 
 ## 1.13.0
 
@@ -49,7 +75,8 @@ The release numbering uses [semantic versioning](http://semver.org).
 
 ## 1.12.0
 
-- **Breaking:** A new secret for Keycloak client authentication is required. See the readme or `./bin/create.secrets.sh` for details.
+- **Breaking:** A new secret for Keycloak client authentication is required. See the readme or `./bin/create.secrets.sh`
+  for details.
 - New orchestrator configuration to adapt to updated Keycloak variations.
 
 ## 1.11.1

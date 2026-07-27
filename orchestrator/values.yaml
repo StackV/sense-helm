@@ -19,18 +19,18 @@ global:
 
 ## @param extraObjects Array of extra K8s manifests to deploy
 ## Note: Supports use of custom Helm templates
-extraObjects: []
+extraObjects: [ ]
 
 ## @section Orchestrator Parameters
 ##
 #
 image:
   ## @param image.repository Orchestrator image.
-  repository: virnao/sense-orchestrator
+  repository: quay.io/virnao/sense-orchestrator
   ## @param image.tag Image tag to pull. Defaults to the chart's `appVersion` if unset.
   tag:
   ## @param image.pullSecrets Secrets for any private docker registry access.
-  pullSecrets: []
+  pullSecrets: [ ]
 #
 auth:
   ## @param auth.clientSecret The secret containing the Keycloak connection details.
@@ -40,14 +40,17 @@ init:
   enabled: true
   #
   migration:
-    ## @param init.migration.enabled Whether to enable the automatic DB migration containers.
-    ## If there are issues with existing migrations preventing startup, disabling these will help, but manual remediation will be necessary in the future.
+    ## @param init.migration.enabled Whether to enable the automatic Flyway DB migration container.
+    ## If there are issues with existing migrations preventing startup, disabling this will help, but manual remediation will be necessary in the future.
     enabled: true
-    ## @param init.migration.repository DB migration tooling image.
-    repository: virnao/sense-db-migration
+    ## @param init.migration.repository Flyway DB migration tooling image.
+    repository: quay.io/virnao/sense-db-migration
     ## @param init.migration.tag An explicit override for the migration tooling tag.
-    ## Defaults to same base value as `image.tag` if unset, minus any specific SHA specification.
+    ## Defaults to the same base value as `image.tag` if unset, minus any specific SHA specification.
     tag:
+    ## @param init.migration.connectRetries Times Flyway retries the initial database connection, once per second.
+    ## The migration container starts before MySQL is necessarily accepting connections; retrying here avoids relying on init container restarts.
+    connectRetries: 60
 #
 java:
   ## @param java.memory JVM Memory maximum.
@@ -98,24 +101,24 @@ probes:
     ## @param probes.startup.enabled Whether to enable the default Orchestrator startup probe.
     enabled: true
     ## @param probes.startup.custom A custom override for the Orchestrator startup probe.
-    custom: {}
+    custom: { }
   liveness:
     ## @param probes.liveness.enabled Whether to enable the default Orchestrator liveness probe.
     enabled: true
     ## @param probes.liveness.custom A custom override for the Orchestrator liveness probe.
-    custom: {}
+    custom: { }
   readiness:
     ## @param probes.readiness.enabled Whether to enable the default Orchestrator readiness probe.
     enabled: true
     ## @param probes.readiness.custom A custom override for the Orchestrator readiness probe.
-    custom: {}
+    custom: { }
 #
 ## @param nodeSelector Orchestrator nodeSelector block.
-nodeSelector: {}
+nodeSelector: { }
 ## @param tolerations Orchestrator tolerations block.
-tolerations: []
+tolerations: [ ]
 ## @param affinity Orchestrator affinity block.
-affinity: {}
+affinity: { }
 
 ## @section Network Parameters
 ## Configuration for service exposure and connectivity.
@@ -174,12 +177,20 @@ issuer:
   ## @param issuer.server Issuing server.
   server: https://acme-v02.api.letsencrypt.org/directory
   ## @param issuer.solvers Override for the Issuer solvers.
-  solvers: []
+  solvers: [ ]
 
 ## @section MySQL Parameters
 ## Configuration for the built-in mysql server.
 #
 mysql:
+  #
+  image:
+    ## @param mysql.image.repository MySQL image.
+    repository: mysql
+    ## @param mysql.image.tag MySQL image tag.
+    tag: 9.7.1
+    ## @param mysql.image.pullPolicy MySQL image pull policy.
+    pullPolicy: IfNotPresent
   ## @param mysql.passwordKey Key of the password for the mysql database, found in `.global.credSecret`.
   passwordKey: mysql-password
   ## @param mysql.generatePVC If set to true, will generate a dynamic PVC. If set to false, pvcName should almost always be set.
@@ -188,6 +199,20 @@ mysql:
   pvcName:
   ## @param mysql.pvcClass PVC class for the mysql persistence.
   pvcClass: local-path
+  ## @param mysql.pvcSize Size of the generated MySQL PVC.
+  pvcSize: 20Gi
+  ## @param mysql.terminationGracePeriodSeconds Shutdown grace period.
+  terminationGracePeriodSeconds: 120
+  #
+  binlog:
+    ## @param mysql.binlog.enabled Whether to enable binary logging. MySQL enables this by default from 8.0 onward; on a single non-replicated node it only consumes volume space.
+    enabled: false
+    ## @param mysql.binlog.expireSeconds Binary log retention, when `mysql.binlog.enabled` is true.
+    expireSeconds: 604800
+  ## @param mysql.charset Server default character set. MySQL 8.0+ defaults to `utf8mb4`, previous versions to `latin1`.
+  charset:
+  ## @param mysql.collation Server default collation.
+  collation:
   #
   resources:
     #
@@ -207,23 +232,23 @@ mysql:
       ## @param mysql.probes.startup.enabled Whether to enable the default MySQL startup probe.
       enabled: true
       ## @param mysql.probes.startup.custom A custom override for the MySQL startup probe.
-      custom: {}
+      custom: { }
     liveness:
       ## @param mysql.probes.liveness.enabled Whether to enable the default MySQL liveness probe.
       enabled: true
       ## @param mysql.probes.liveness.custom A custom override for the MySQL liveness probe.
-      custom: {}
+      custom: { }
     readiness:
       ## @param mysql.probes.readiness.enabled Whether to enable the default MySQL readiness probe.
       enabled: true
       ## @param mysql.probes.readiness.custom A custom override for the MySQL readiness probe.
-      custom: {}
+      custom: { }
   ## @param mysql.nodeSelector MySQL nodeSelector block.
-  nodeSelector: {}
+  nodeSelector: { }
   ## @param mysql.tolerations MySQL tolerations block.
-  tolerations: []
+  tolerations: [ ]
   ## @param mysql.affinity MySQL affinity block.
-  affinity: {}
+  affinity: { }
 
 ## @section SMTP Parameters
 ## Configuration for the pilot Wildfly built-in mail system. Currently experimental.

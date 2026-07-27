@@ -37,3 +37,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/name: {{ include "common.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
+
+{{- define "common.tlsSecret" -}}
+{{- default (printf "%s-ingress-secret" (include "common.name" .)) .Values.ingress.tlsSecret -}}
+{{- end -}}

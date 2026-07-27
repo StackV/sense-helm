@@ -13,6 +13,17 @@ data:
     wait_timeout = 1000000
     explicit_defaults_for_timestamp = 1
     default-time-zone = "+00:00"
+    {{- if .Values.mysql.binlog.enabled }}
+    binlog_expire_logs_seconds = {{ .Values.mysql.binlog.expireSeconds }}
+    {{- else }}
+    skip-log-bin
+    {{- end }}
+    {{- if .Values.mysql.charset }}
+    character-set-server = {{ .Values.mysql.charset }}
+    {{- end }}
+    {{- if .Values.mysql.collation }}
+    collation-server = {{ .Values.mysql.collation }}
+    {{- end }}
 kind: ConfigMap
 metadata:
   namespace: {{ include "common.namespace" . | quote }}

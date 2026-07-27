@@ -5,16 +5,16 @@ kind: Certificate
 metadata:
   namespace: {{ include "common.namespace" . | quote }}
   {{- if .Values.certmanager.annotations }}
-  annotations: 
+  annotations:
   {{- include "common.render" (dict "value" .Values.certmanager.annotations "context" $) | nindent 4 }}
   {{- end }}
   labels: {{- include "common.labels" . | nindent 4 }}
     app.kubernetes.io/component: orchestrator
   name: {{ printf "%s-cert" (include "common.name" .) }}
 spec:
-  secretName: {{ printf "%s-cert" (include "common.name" .) }}
+  secretName: {{ include "common.tlsSecret" . }}
   commonName: {{ .Values.certmanager.commonName | default .Values.global.domain }}
-  {{- if .Values.certmanager.dnsNames }}  
+  {{- if .Values.certmanager.dnsNames }}
   dnsNames:
   {{- include "common.render" (dict "value" .Values.certmanager.dnsNames "context" $) | nindent 4 }}
   {{- else }}

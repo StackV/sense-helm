@@ -17,3 +17,10 @@ index.yaml
 /*_old/
 
 /keycloak/bin/dumps/
+
+.aiassistant
+.claude
+.openai
+.codex
+.openapi-generator/
+.openapi-generator

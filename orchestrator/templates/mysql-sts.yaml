@@ -15,10 +15,13 @@ spec:
   replicas: 1
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/mysql-config-map.yaml") . | sha256sum }}
       labels: {{- include "common.labels" . | nindent 8 }}
         app.kubernetes.io/component: mysql
       name: {{ $mysqlName }}
     spec:
+      terminationGracePeriodSeconds: {{ .Values.mysql.terminationGracePeriodSeconds }}
       containers:
         - env:
             - name: MYSQL_ROOT_PASSWORD
@@ -26,36 +29,49 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.global.credSecret }}
                   key: {{ .Values.mysql.passwordKey }}
-          image: mysql:5.7
-          args:
-            - "--ignore-db-dir=lost+found"
-          imagePullPolicy: Always
+          image: "{{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag }}"
+          imagePullPolicy: {{ .Values.mysql.image.pullPolicy }}
           {{- if .Values.mysql.probes.startup.custom }}
           startupProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.startup.custom "context" $) | nindent 12 }}
+          {{- else if .Values.mysql.probes.startup.enabled }}
+          startupProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysqladmin -uroot ping --silent'
+            failureThreshold: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
           {{- end }}
-          {{- if .Values.mysql.probes.liveness.enabled }}
+          {{- if .Values.mysql.probes.liveness.custom }}
+          livenessProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.liveness.custom "context" $) | nindent 12 }}
+          {{- else if .Values.mysql.probes.liveness.enabled }}
           livenessProbe:
             exec:
               command:
-                - "bash"
+                - "sh"
                 - "-c"
-                - "mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD ping &> /dev/null"
-          {{- else if .Values.mysql.probes.liveness.custom }}
-          livenessProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.liveness.custom "context" $) | nindent 12 }}
+                - 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysqladmin -uroot ping --silent'
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
           {{- end }}
-          {{- if .Values.mysql.probes.readiness.enabled }}
+          {{- if .Values.mysql.probes.readiness.custom }}
+          readinessProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.readiness.custom "context" $) | nindent 12 }}
+          {{- else if .Values.mysql.probes.readiness.enabled }}
           readinessProbe:
             exec:
-              command: 
-                - "bash" 
+              command:
+                - "sh"
                 - "-c"
-                - "mysql -h 127.0.0.1 --password=${MYSQL_ROOT_PASSWORD} -e \"SELECT 1\""
+                - 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql -h 127.0.0.1 -uroot -e "SELECT 1"'
+            failureThreshold: 6
             initialDelaySeconds: 5
-            periodSeconds: 2
-            timeoutSeconds: 1
-          {{- else if .Values.mysql.probes.readiness.custom }}
-          readinessProbe: {{- include "common.render" (dict "value" .Values.mysql.probes.readiness.custom "context" $) | nindent 12 }}
-          {{- end }}        
+            periodSeconds: 10
+            timeoutSeconds: 5
+          {{- end }}
           name: {{ $mysqlName }}
           ports:
             - containerPort: 3306

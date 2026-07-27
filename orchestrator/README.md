@@ -1,18 +1,35 @@
 # SENSE Orchestrator
 
-This chart installs the SENSE Orchestrator on a K8s cluster, alongside an embedded MySQL server. For more detailed instructions of how this chart can be used, visit https://stackv.github.io/sense-docs/docs/installation/kubernetes.
+This chart installs the SENSE Orchestrator on a K8s cluster alongside an embedded MySQL server. For more detailed
+instructions of how this chart can be used, visit https://stackv.github.io/sense-docs/docs/installation/kubernetes.
+
+## Upgrading to 2.0.0
+
+Chart 2.0.0 moves the bundled MySQL server from 5.7 to 9.7. **This is not an in-place upgrade.** MySQL only supports
+upgrades between consecutive series, so a 9.7 server will not start against a 5.7 data directory. The data has to be
+dumped and reloaded onto a fresh volume, and the application images must be able to authenticate with
+`caching_sha2_password` (MySQL removed `mysql_native_password` in 8.4).
+
+See [`../.claude/mysql_migrate.md`](../.claude/mysql_migrate.md) for the pre-flight checks and the migration steps.
 
 ## Configuration
 
-In most cases you should be fine reviewing the variables established below from the full `values.yaml` as a base. Copy this to a new file, `override.values.yaml`, and from there you can remove any unneeded fields that you plan on leaving to their default values.
+In most cases you should be fine reviewing the variables established below from the full `values.yaml` as a base. Copy
+this to a new file, `override.values.yaml`, and from there you can remove any unneeded fields that you plan on leaving
+to their default values.
 
 ### Secrets
 
-The orchestrator relies on a set of secrets that will need to be present before installing the chart. Example `kubectl` commands can be found in `./bin/create_secrets.sh`. Remember to configure your override with the correct names if you change the defaults.
+The orchestrator relies on a set of secrets that will need to be present before installing the chart. Example `kubectl`
+commands can be found in `./bin/create_secrets.sh`. Remember to configure your override with the correct names if you
+change the defaults.
 
-- `.Values.global.credSecret` (Default `sense-cred`): Various passwords and credentials used by the orchestrator are set here, namely passwords for the database, client TLS and SMTP.
-- `.Values.auth.clientSecret` (Default `sense-auth-cred`): The Keycloak connection details are stored here, required for securing the application and API.
-- `.Values.tls.keystoreSecret` (Default `sense-keystores`): The orchestrator uses a JKS keystore to enable client-based TLS for supported RMs. These are stored in binary data at the `client.keystore` key.
+- `.Values.global.credSecret` (Default `sense-cred`): Various passwords and credentials used by the orchestrator are set
+  here, namely passwords for the database, client TLS and SMTP.
+- `.Values.auth.clientSecret` (Default `sense-auth-cred`): The Keycloak connection details are stored here, required for
+  securing the application and API.
+- `.Values.tls.keystoreSecret` (Default `sense-keystores`): The orchestrator uses a JKS keystore to enable client-based
+  TLS for supported RMs. These are stored in binary data at the `client.keystore` key.
 
 ## Installation
 
@@ -20,11 +37,15 @@ After creating the required secrets and configuring your override, run `helm ins
 
 ## Usage
 
-Once ready, the Orchestrator should be accessible via the established ingress at an address similar to `https://{{ingress.hostname or global.domain}}/StackV-web/portal/`.
+Once ready, the Orchestrator should be accessible via the established ingress at an address similar to
+`https://{{ingress.hostname or global.domain}}/StackV-web/portal/`.
 
-If the ingress was disabled or is non-functional, you can access the orchestrator via port-forwarding with a command like `kubectl port-forward svc/senseo-orchestrator 8282:8080`, which should make it available at `http://localhost:8282/StackV-web/portal`.
+If the ingress was disabled or is non-functional, you can access the orchestrator via port-forwarding with a command
+like `kubectl port-forward svc/senseo-orchestrator 8282:8080`, which should make it available at
+`http://localhost:8282/StackV-web/portal`.
 
-Once you reach the web portal, you will be redirected to the configured Keycloak instance, where you may login and begin using the orchestrator.
+Once you reach the web portal, you will be redirected to the configured Keycloak instance, where you may login and begin
+using the orchestrator.
 
 ## Parameters
 
@@ -48,9 +69,10 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 | `image.pullSecrets`                | Secrets for any private docker registry access.                                                                                               | `[]`                        |
 | `auth.clientSecret`                | The secret containing the Keycloak connection details.                                                                                        | `sense-auth-cred`           |
 | `init.enabled`                     | Whether to enable the built-in init containers.                                                                                               | `true`                      |
-| `init.migration.enabled`           | Whether to enable the automatic DB migration containers.                                                                                      | `true`                      |
-| `init.migration.repository`        | DB migration tooling image.                                                                                                                   | `virnao/sense-db-migration` |
+| `init.migration.enabled`           | Whether to enable the automatic Flyway DB migration container.                                                                                | `true`                      |
+| `init.migration.repository`        | Flyway DB migration tooling image.                                                                                                            | `virnao/sense-db-migration` |
 | `init.migration.tag`               | An explicit override for the migration tooling tag.                                                                                           | `nil`                       |
+| `init.migration.connectRetries`    | Times Flyway retries the initial database connection, once per second.                                                                        | `60`                        |
 | `java.memory`                      | JVM Memory maximum.                                                                                                                           | `8G`                        |
 | `resources.requests.cpu`           | Orchestrator CPU request.                                                                                                                     | `1500m`                     |
 | `resources.requests.memory`        | Orchestrator memory request.                                                                                                                  | `6Gi`                       |
@@ -105,25 +127,34 @@ Once you reach the web portal, you will be redirected to the configured Keycloak
 
 ### MySQL Parameters
 
-| Name                              | Description                                                                                                         | Value            |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| `mysql.passwordKey`               | Key of the password for the mysql database, found in `.global.credSecret`.                                          | `mysql-password` |
-| `mysql.generatePVC`               | If set to true, will generate a dynamic PVC. If set to false, pvcName should almost always be set.                  | `true`           |
-| `mysql.pvcName`                   | Override for the PVC name. Defaults to a chart-generated name (such as `{release name}-sense-mysql-pvc` ) if unset. | `nil`            |
-| `mysql.pvcClass`                  | PVC class for the mysql persistence.                                                                                | `local-path`     |
-| `mysql.resources.requests.cpu`    | MySQL CPU request.                                                                                                  | `300m`           |
-| `mysql.resources.requests.memory` | MySQL memory request.                                                                                               | `1Gi`            |
-| `mysql.resources.limits.cpu`      | MySQL CPU limit.                                                                                                    | `1000m`          |
-| `mysql.resources.limits.memory`   | MySQL memory limit.                                                                                                 | `4Gi`            |
-| `mysql.probes.startup.enabled`    | Whether to enable the default MySQL startup probe.                                                                  | `true`           |
-| `mysql.probes.startup.custom`     | A custom override for the MySQL startup probe.                                                                      | `{}`             |
-| `mysql.probes.liveness.enabled`   | Whether to enable the default MySQL liveness probe.                                                                 | `true`           |
-| `mysql.probes.liveness.custom`    | A custom override for the MySQL liveness probe.                                                                     | `{}`             |
-| `mysql.probes.readiness.enabled`  | Whether to enable the default MySQL readiness probe.                                                                | `true`           |
-| `mysql.probes.readiness.custom`   | A custom override for the MySQL readiness probe.                                                                    | `{}`             |
-| `mysql.nodeSelector`              | MySQL nodeSelector block.                                                                                           | `{}`             |
-| `mysql.tolerations`               | MySQL tolerations block.                                                                                            | `[]`             |
-| `mysql.affinity`                  | MySQL affinity block.                                                                                               | `{}`             |
+| Name                                  | Description                                                                                                                                     | Value            |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| `mysql.image.repository`              | MySQL image.                                                                                                                                    | `mysql`          |
+| `mysql.image.tag`                     | MySQL image tag.                                                                                                                                | `9.7.1`          |
+| `mysql.image.pullPolicy`              | MySQL image pull policy.                                                                                                                        | `IfNotPresent`   |
+| `mysql.passwordKey`                   | Key of the password for the mysql database, found in `.global.credSecret`.                                                                      | `mysql-password` |
+| `mysql.generatePVC`                   | If set to true, will generate a dynamic PVC. If set to false, pvcName should almost always be set.                                              | `true`           |
+| `mysql.pvcName`                       | Override for the PVC name. Defaults to a chart-generated name (such as `{release name}-sense-mysql-pvc` ) if unset.                             | `nil`            |
+| `mysql.pvcClass`                      | PVC class for the mysql persistence.                                                                                                            | `local-path`     |
+| `mysql.pvcSize`                       | Size of the generated MySQL PVC.                                                                                                                | `20Gi`           |
+| `mysql.terminationGracePeriodSeconds` | Shutdown grace period.                                                                                                                          | `120`            |
+| `mysql.binlog.enabled`                | Whether to enable binary logging. MySQL enables this by default from 8.0 onward; on a single non-replicated node it only consumes volume space. | `false`          |
+| `mysql.binlog.expireSeconds`          | Binary log retention, when `mysql.binlog.enabled` is true.                                                                                      | `604800`         |
+| `mysql.charset`                       | Server default character set. MySQL 8.0+ defaults to `utf8mb4`, previous versions to `latin1`.                                                  | `nil`            |
+| `mysql.collation`                     | Server default collation.                                                                                                                       | `nil`            |
+| `mysql.resources.requests.cpu`        | MySQL CPU request.                                                                                                                              | `300m`           |
+| `mysql.resources.requests.memory`     | MySQL memory request.                                                                                                                           | `1Gi`            |
+| `mysql.resources.limits.cpu`          | MySQL CPU limit.                                                                                                                                | `1000m`          |
+| `mysql.resources.limits.memory`       | MySQL memory limit.                                                                                                                             | `4Gi`            |
+| `mysql.probes.startup.enabled`        | Whether to enable the default MySQL startup probe.                                                                                              | `true`           |
+| `mysql.probes.startup.custom`         | A custom override for the MySQL startup probe.                                                                                                  | `{}`             |
+| `mysql.probes.liveness.enabled`       | Whether to enable the default MySQL liveness probe.                                                                                             | `true`           |
+| `mysql.probes.liveness.custom`        | A custom override for the MySQL liveness probe.                                                                                                 | `{}`             |
+| `mysql.probes.readiness.enabled`      | Whether to enable the default MySQL readiness probe.                                                                                            | `true`           |
+| `mysql.probes.readiness.custom`       | A custom override for the MySQL readiness probe.                                                                                                | `{}`             |
+| `mysql.nodeSelector`                  | MySQL nodeSelector block.                                                                                                                       | `{}`             |
+| `mysql.tolerations`                   | MySQL tolerations block.                                                                                                                        | `[]`             |
+| `mysql.affinity`                      | MySQL affinity block.                                                                                                                           | `{}`             |
 
 ### SMTP Parameters
 
