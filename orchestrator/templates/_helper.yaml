@@ -1,0 +1,28 @@
+{{- define "orchestrator.archiveSeeding.validate" -}}
+{{- $archiveSeeding := .Values.archive.seeding }}
+{{- $archiveSource := $archiveSeeding.source }}
+{{- if $archiveSeeding.enabled }}
+{{- if not (or (eq $archiveSource.type "secret") (eq $archiveSource.type "configMap")) }}
+{{- fail "archive.seeding.source.type must be either secret or configMap when archive seeding is enabled" }}
+{{- end }}
+{{- if not $archiveSource.name }}
+{{- fail "archive.seeding.source.name is required when archive seeding is enabled" }}
+{{- end }}
+{{- if not $archiveSeeding.mountPath }}
+{{- fail "archive.seeding.mountPath is required when archive seeding is enabled" }}
+{{- end }}
+{{- $archiveSeedPaths := dict }}
+{{- range $item := $archiveSource.items }}
+{{- if or (not $item.key) (not $item.path) }}
+{{- fail "archive.seeding.source.items entries require both key and path" }}
+{{- end }}
+{{- if or (contains "/" $item.path) (contains ".." $item.path) (not (hasSuffix ".json" ($item.path | lower))) }}
+{{- fail "archive.seeding.source.items paths must be unique direct .json filenames without '..'" }}
+{{- end }}
+{{- if hasKey $archiveSeedPaths $item.path }}
+{{- fail "archive.seeding.source.items paths must be unique" }}
+{{- end }}
+{{- $_ := set $archiveSeedPaths $item.path true }}
+{{- end }}
+{{- end }}
+{{- end -}}

@@ -36,9 +36,6 @@ auth:
   ## @param auth.clientSecret The secret containing the Keycloak connection details.
   clientSecret: sense-auth-cred
 init:
-  ## @param init.enabled Whether to enable the built-in init containers.
-  enabled: true
-  #
   migration:
     ## @param init.migration.enabled Whether to enable the automatic Flyway DB migration container.
     ## If there are issues with existing migrations preventing startup, disabling this will help, but manual remediation will be necessary in the future.
@@ -51,6 +48,29 @@ init:
     ## @param init.migration.connectRetries Times Flyway retries the initial database connection, once per second.
     ## The migration container starts before MySQL is necessarily accepting connections; retrying here avoids relying on init container restarts.
     connectRetries: 60
+#
+archive:
+  seeding:
+    ## @param archive.seeding.enabled Whether to seed a pristine deployment from archive JSON files at first boot.
+    enabled: false
+    ## @param archive.seeding.mountPath Directory where staged archive files are presented to the orchestrator.
+    mountPath: /opt/sense/archive-import
+    #
+    source:
+      ## @param archive.seeding.source.type Existing source object type. Supported values are `secret` and `configMap`.
+      type: secret
+      ## @param archive.seeding.source.name Existing Secret or ConfigMap name in the target namespace.
+      name:
+      ## @param archive.seeding.source.items Optional source key selection and filename mapping. When empty, all source keys ending in `.json` are staged under their original names.
+      items: [ ]
+    #
+    stagingImage:
+      ## @param archive.seeding.stagingImage.repository Archive staging init container image repository.
+      repository: busybox
+      ## @param archive.seeding.stagingImage.tag Archive staging init container image tag.
+      tag: 1.37.0
+      ## @param archive.seeding.stagingImage.pullPolicy Archive staging init container image pull policy.
+      pullPolicy: IfNotPresent
 #
 java:
   ## @param java.memory JVM Memory maximum.

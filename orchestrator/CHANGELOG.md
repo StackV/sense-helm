@@ -3,6 +3,15 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart. The release numbering
 uses [semantic versioning](http://semver.org).
 
+## 2.1.0
+
+- **Breaking:** Remove redundant `init.enabled`. Control the Flyway migration init container with
+  `init.migration.enabled` and archive staging with `archive.seeding.enabled`; their existing defaults preserve the
+  previous default deployment behavior.
+- Add optional first-boot archive seeding from an existing Secret or ConfigMap. The chart stages source files in a
+  memory-backed `emptyDir` with a BusyBox init container so the orchestrator sees regular files rather than Kubernetes
+  projected-volume symlinks.
+
 ## 2.0.0
 
 - **Breaking:** Upgrade the bundled MySQL server from 5.7 to 9.7 (LTS). Dump and reload onto a fresh volume if required;

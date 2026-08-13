@@ -1,5 +1,6 @@
 {{- $orchName := printf "%s-orch" (include "common.name" .) }}
 {{- $mysqlName := printf "%s-mysql" (include "common.name" .) }}
+{{- include "orchestrator.archiveSeeding.validate" . }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -28,8 +29,55 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.init.enabled }}
+      {{- if or .Values.init.migration.enabled .Values.archive.seeding.enabled }}
       initContainers:
+        {{- if .Values.archive.seeding.enabled }}
+        - name: archive-seed-stage
+          image: "{{ .Values.archive.seeding.stagingImage.repository }}:{{ .Values.archive.seeding.stagingImage.tag }}"
+          imagePullPolicy: {{ .Values.archive.seeding.stagingImage.pullPolicy }}
+          command:
+            - /bin/sh
+            - -ec
+          args:
+            - |
+              set -eu
+              umask 077
+              copied=false
+
+              for source in /archive-source/* /archive-source/.[!.]*; do
+                [ -f "$source" ] || continue
+
+                case "$(basename "$source")" in
+                  *.[jJ][sS][oO][nN])
+                    ;;
+                  *)
+                    continue
+                    ;;
+                esac
+
+                target="/archive-staging/$(basename "$source")"
+                cp -L "$source" "$target"
+                chmod 0444 "$target"
+                copied=true
+              done
+
+              if [ "$copied" != true ]; then
+                echo "Archive seed source contains no readable JSON files." >&2
+                exit 1
+              fi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /archive-source
+              name: archive-seed-source
+              readOnly: true
+            - mountPath: /archive-staging
+              name: archive-seed-staging
+        {{- end }}
         {{- if .Values.init.migration.enabled }}
         - name: "{{ $orchName }}-db-init"
           image: "{{ .Values.init.migration.repository }}:{{ splitList "@" (default .Chart.AppVersion (default .Values.image.tag .Values.init.migration.tag)) | first }}"
@@ -78,6 +126,10 @@ spec:
               value: "{{ $mysqlName }}:3306"
             - name: JAVA_MEMORY
               value: "{{ .Values.java.memory }}"
+            {{- if .Values.archive.seeding.enabled }}
+            - name: ARCHIVE_IMPORT_PATH
+              value: {{ .Values.archive.seeding.mountPath | quote }}
+            {{- end }}
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
@@ -156,11 +208,37 @@ spec:
           volumeMounts:
             - mountPath: /opt/jboss/wildfly/standalone/configuration/tls
               name: client-keystore
+            {{- if .Values.archive.seeding.enabled }}
+            - mountPath: {{ .Values.archive.seeding.mountPath | quote }}
+              name: archive-seed-staging
+              readOnly: true
+            {{- end }}
       restartPolicy: Always
       volumes:
         - secret:
             secretName: {{ default (printf "%s-blank-keystore" (include "common.name" .)) .Values.tls.keystoreSecret }}
           name: client-keystore
+        {{- if .Values.archive.seeding.enabled }}
+        - name: archive-seed-source
+          {{- if eq .Values.archive.seeding.source.type "secret" }}
+          secret:
+            secretName: {{ .Values.archive.seeding.source.name }}
+            {{- with .Values.archive.seeding.source.items }}
+            items:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+          {{- else }}
+          configMap:
+            name: {{ .Values.archive.seeding.source.name }}
+            {{- with .Values.archive.seeding.source.items }}
+            items:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+          {{- end }}
+        - name: archive-seed-staging
+          emptyDir:
+            medium: Memory
+        {{- end }}
       {{- if .Values.affinity }}
       affinity: {{- include "common.render" ( dict "value" .Values.affinity "context" $) | nindent 8 }}
       {{- end }}

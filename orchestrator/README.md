@@ -31,6 +31,59 @@ change the defaults.
 - `.Values.tls.keystoreSecret` (Default `sense-keystores`): The orchestrator uses a JKS keystore to enable client-based
   TLS for supported RMs. These are stored in binary data at the `client.keystore` key.
 
+### Initial archive seeding
+
+An optional first-boot archive seed can initialize a pristine deployment from JSON archive files. Create an existing
+Secret in the release namespace, naming each key with a `.json` suffix so the chart can stage it as an archive file:
+
+```sh
+kubectl create secret generic sense-archive-seed \
+  --namespace sense \
+  --from-file=00-settings.json=/path/to/settings.json \
+  --from-file=10-drivers.json=/path/to/drivers.json
+```
+
+Enable seeding by referencing the Secret:
+
+```yaml
+archive:
+  seeding:
+    enabled: true
+    source:
+      type: secret
+      name: sense-archive-seed
+```
+
+The source object must already exist in the target namespace. With the default empty `source.items`, every source key
+whose name ends in `.json` is staged using its original name. Provide `source.items` to select source keys, add the
+required `.json` suffix, or control lexical import order:
+
+```yaml
+archive:
+  seeding:
+    source:
+      items:
+        - key: settings
+          path: 00-settings.json
+        - key: drivers
+          path: 10-drivers.json
+```
+
+The chart mounts the source only in a BusyBox init container, which copies its files into a memory-backed `emptyDir`.
+The application receives only the staged directory, containing ordinary files rather than Kubernetes projected-volume
+symlinks. The init container fails before application startup if the source contains no readable `.json` files.
+
+Use a Secret for archives that contain credentials. A ConfigMap is supported only for non-sensitive archive data. Both
+Kubernetes object types are limited to 1 MiB, so this mechanism is intended for small archive sets. Do not put archive
+content in Helm values: Helm retains supplied values in release metadata.
+
+Seeding runs only when the database is pristine. After a successful import, the application records a completion marker
+and later Pod restarts or source updates do not reimport the archive. Updating the source object does not restart the
+StatefulSet; before a successful seed, recreate the Pod after correcting a source. The archive import runs during
+application startup, so configure `probes.startup.custom` for an unusually slow import. Keep the source object while
+`archive.seeding.enabled` is true: the staging init container runs on every new Pod. After confirming a successful seed,
+disable archive seeding in a Helm upgrade before deleting the source object.
+
 ## Installation
 
 After creating the required secrets and configuring your override, run `helm install senseo . -f override.values.yaml`.
@@ -52,7 +105,7 @@ using the orchestrator.
 ### Global Parameters
 
 | Name                | Description                                                                                       | Value                 |
-| ------------------- | ------------------------------------------------------------------------------------------------- | --------------------- |
+|---------------------|---------------------------------------------------------------------------------------------------|-----------------------|
 | `global.nameSuffix` | A name to append to the Release Name.                                                             | `sense`               |
 | `global.namespace`  | The target namespace.                                                                             | `sense`               |
 | `global.mode`       | If set to 'test', enables CD test server behavior (seed/reset SQL DB with integration test data). | `prod`                |
@@ -62,45 +115,52 @@ using the orchestrator.
 
 ### Orchestrator Parameters
 
-| Name                               | Description                                                                                                                                   | Value                       |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| `image.repository`                 | Orchestrator image.                                                                                                                           | `virnao/sense-orchestrator` |
-| `image.tag`                        | Image tag to pull. Defaults to the chart's `appVersion` if unset.                                                                             | `nil`                       |
-| `image.pullSecrets`                | Secrets for any private docker registry access.                                                                                               | `[]`                        |
-| `auth.clientSecret`                | The secret containing the Keycloak connection details.                                                                                        | `sense-auth-cred`           |
-| `init.enabled`                     | Whether to enable the built-in init containers.                                                                                               | `true`                      |
-| `init.migration.enabled`           | Whether to enable the automatic Flyway DB migration container.                                                                                | `true`                      |
-| `init.migration.repository`        | Flyway DB migration tooling image.                                                                                                            | `virnao/sense-db-migration` |
-| `init.migration.tag`               | An explicit override for the migration tooling tag.                                                                                           | `nil`                       |
-| `init.migration.connectRetries`    | Times Flyway retries the initial database connection, once per second.                                                                        | `60`                        |
-| `java.memory`                      | JVM Memory maximum.                                                                                                                           | `8G`                        |
-| `resources.requests.cpu`           | Orchestrator CPU request.                                                                                                                     | `1500m`                     |
-| `resources.requests.memory`        | Orchestrator memory request.                                                                                                                  | `6Gi`                       |
-| `resources.limits.cpu`             | Orchestrator CPU limit.                                                                                                                       | `6000m`                     |
-| `resources.limits.memory`          | Orchestrator memory limit.                                                                                                                    | `24Gi`                      |
-| `service.type`                     | Orchestrator service type.                                                                                                                    | `ClusterIP`                 |
-| `service.ports.http`               | Orchestrator HTTP port.                                                                                                                       | `8080`                      |
-| `service.ports.https`              | Orchestrator HTTPS port.                                                                                                                      | `8443`                      |
-| `service.ports.debug.enabled`      | If set to `true`, will enable a set of debug and management ports.                                                                            | `false`                     |
-| `service.ports.debug.consoleHttp`  | Wildfly HTTP port.                                                                                                                            | `9990`                      |
-| `service.ports.debug.consoleHttps` | Wildfly HTTPS port.                                                                                                                           | `9993`                      |
-| `service.ports.debug.debugger`     | Wildfly debug port.                                                                                                                           | `8787`                      |
-| `tls.passwordKey`                  | Key of the password for the orchestrator keystore files, found in `.global.credSecret`.                                                       | `tls-password`              |
-| `tls.keystoreSecret`               | Name of Kubernetes secret for the orchestrator keystore files. If unset, the chart will automatically create a secret with an empty keystore. | `nil`                       |
-| `probes.startup.enabled`           | Whether to enable the default Orchestrator startup probe.                                                                                     | `true`                      |
-| `probes.startup.custom`            | A custom override for the Orchestrator startup probe.                                                                                         | `{}`                        |
-| `probes.liveness.enabled`          | Whether to enable the default Orchestrator liveness probe.                                                                                    | `true`                      |
-| `probes.liveness.custom`           | A custom override for the Orchestrator liveness probe.                                                                                        | `{}`                        |
-| `probes.readiness.enabled`         | Whether to enable the default Orchestrator readiness probe.                                                                                   | `true`                      |
-| `probes.readiness.custom`          | A custom override for the Orchestrator readiness probe.                                                                                       | `{}`                        |
-| `nodeSelector`                     | Orchestrator nodeSelector block.                                                                                                              | `{}`                        |
-| `tolerations`                      | Orchestrator tolerations block.                                                                                                               | `[]`                        |
-| `affinity`                         | Orchestrator affinity block.                                                                                                                  | `{}`                        |
+| Name                                      | Description                                                                                                                                   | Value                               |
+|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| `image.repository`                        | Orchestrator image.                                                                                                                           | `quay.io/virnao/sense-orchestrator` |
+| `image.tag`                               | Image tag to pull. Defaults to the chart's `appVersion` if unset.                                                                             | `nil`                               |
+| `image.pullSecrets`                       | Secrets for any private docker registry access.                                                                                               | `[]`                                |
+| `auth.clientSecret`                       | The secret containing the Keycloak connection details.                                                                                        | `sense-auth-cred`                   |
+| `init.migration.enabled`                  | Whether to enable the automatic Flyway DB migration container.                                                                                | `true`                              |
+| `init.migration.repository`               | Flyway DB migration tooling image.                                                                                                            | `quay.io/virnao/sense-db-migration` |
+| `init.migration.tag`                      | An explicit override for the migration tooling tag.                                                                                           | `nil`                               |
+| `init.migration.connectRetries`           | Times Flyway retries the initial database connection, once per second.                                                                        | `60`                                |
+| `archive.seeding.enabled`                 | Whether to seed a pristine deployment from archive JSON files at first boot.                                                                  | `false`                             |
+| `archive.seeding.mountPath`               | Directory where staged archive files are presented to the orchestrator.                                                                       | `/opt/sense/archive-import`         |
+| `archive.seeding.source.type`             | Existing source object type; supported values are `secret` and `configMap`.                                                                   | `secret`                            |
+| `archive.seeding.source.name`             | Existing Secret or ConfigMap name in the target namespace.                                                                                    | `nil`                               |
+| `archive.seeding.source.items`            | Optional source key selection and filename mapping; empty stages all `.json` keys under their original names.                                 | `[]`                                |
+| `archive.seeding.stagingImage.repository` | Archive staging init container image repository.                                                                                              | `busybox`                           |
+| `archive.seeding.stagingImage.tag`        | Archive staging init container image tag.                                                                                                     | `1.37.0`                            |
+| `archive.seeding.stagingImage.pullPolicy` | Archive staging init container image pull policy.                                                                                             | `IfNotPresent`                      |
+| `java.memory`                             | JVM Memory maximum.                                                                                                                           | `8G`                                |
+| `resources.requests.cpu`                  | Orchestrator CPU request.                                                                                                                     | `1500m`                             |
+| `resources.requests.memory`               | Orchestrator memory request.                                                                                                                  | `6Gi`                               |
+| `resources.limits.cpu`                    | Orchestrator CPU limit.                                                                                                                       | `6000m`                             |
+| `resources.limits.memory`                 | Orchestrator memory limit.                                                                                                                    | `24Gi`                              |
+| `service.type`                            | Orchestrator service type.                                                                                                                    | `ClusterIP`                         |
+| `service.ports.http`                      | Orchestrator HTTP port.                                                                                                                       | `8080`                              |
+| `service.ports.https`                     | Orchestrator HTTPS port.                                                                                                                      | `8443`                              |
+| `service.ports.debug.enabled`             | If set to `true`, will enable a set of debug and management ports.                                                                            | `false`                             |
+| `service.ports.debug.consoleHttp`         | Wildfly HTTP port.                                                                                                                            | `9990`                              |
+| `service.ports.debug.consoleHttps`        | Wildfly HTTPS port.                                                                                                                           | `9993`                              |
+| `service.ports.debug.debugger`            | Wildfly debug port.                                                                                                                           | `8787`                              |
+| `tls.passwordKey`                         | Key of the password for the orchestrator keystore files, found in `.global.credSecret`.                                                       | `tls-password`                      |
+| `tls.keystoreSecret`                      | Name of Kubernetes secret for the orchestrator keystore files. If unset, the chart will automatically create a secret with an empty keystore. | `nil`                               |
+| `probes.startup.enabled`                  | Whether to enable the default Orchestrator startup probe.                                                                                     | `true`                              |
+| `probes.startup.custom`                   | A custom override for the Orchestrator startup probe.                                                                                         | `{}`                                |
+| `probes.liveness.enabled`                 | Whether to enable the default Orchestrator liveness probe.                                                                                    | `true`                              |
+| `probes.liveness.custom`                  | A custom override for the Orchestrator liveness probe.                                                                                        | `{}`                                |
+| `probes.readiness.enabled`                | Whether to enable the default Orchestrator readiness probe.                                                                                   | `true`                              |
+| `probes.readiness.custom`                 | A custom override for the Orchestrator readiness probe.                                                                                       | `{}`                                |
+| `nodeSelector`                            | Orchestrator nodeSelector block.                                                                                                              | `{}`                                |
+| `tolerations`                             | Orchestrator tolerations block.                                                                                                               | `[]`                                |
+| `affinity`                                | Orchestrator affinity block.                                                                                                                  | `{}`                                |
 
 ### Network Parameters
 
 | Name                               | Description                                                                                                        | Value                                            |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
+|------------------------------------|--------------------------------------------------------------------------------------------------------------------|--------------------------------------------------|
 | `ingress.enabled`                  | Whether to enable the Ingress resource.                                                                            | `true`                                           |
 | `ingress.className`                | Ingress class override. Defaults to the cluster's default ingress class if unset.                                  | `nil`                                            |
 | `ingress.hostname`                 | Explicit host to be used for the ingress. Defaults to the value of `global.domain` if unset.                       | `nil`                                            |
@@ -128,7 +188,7 @@ using the orchestrator.
 ### MySQL Parameters
 
 | Name                                  | Description                                                                                                                                     | Value            |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+|---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|------------------|
 | `mysql.image.repository`              | MySQL image.                                                                                                                                    | `mysql`          |
 | `mysql.image.tag`                     | MySQL image tag.                                                                                                                                | `9.7.1`          |
 | `mysql.image.pullPolicy`              | MySQL image pull policy.                                                                                                                        | `IfNotPresent`   |
@@ -159,7 +219,7 @@ using the orchestrator.
 ### SMTP Parameters
 
 | Name               | Description                                                                                                         | Value                 |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------- |
+|--------------------|---------------------------------------------------------------------------------------------------------------------|-----------------------|
 | `mail.host`        | Host of an external SMTP server for orchestrator notifications. Leave unchanged (smtp.office365.com) if not in-use. | `smtp.office365.com`  |
 | `mail.port`        | Port of the above SMTP server. Leave unchanged (587) even if not in-use.                                            | `587`                 |
 | `mail.username`    | Username to connect to the above SMTP server.                                                                       | `example@outlook.com` |

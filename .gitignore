@@ -18,8 +18,11 @@ index.yaml
 
 /keycloak/bin/dumps/
 
+# Agentic directories
 .aiassistant
 .claude
+.opencode
+.slim/deepwork/
 .openai
 .codex
 .openapi-generator/
