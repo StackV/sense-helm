@@ -1,58 +1,48 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: keycloak-realm-export
+  name: ${EXPORT_JOB_NAME}
 spec:
   backoffLimit: 0
   template:
     spec:
       restartPolicy: Never
-      imagePullSecrets:
-        - name: quay-cred
+      imagePullSecrets: ${KEYCLOAK_IMAGE_PULL_SECRETS}
       containers:
         - name: keycloak-export
-          image: quay.io/virnao/sense-keycloak:next
+          image: ${KEYCLOAK_IMAGE}
           command:
             - /opt/keycloak/bin/kc.sh
             - export
             - --dir
             - /export
             - --verbose
-            #            - --optimized
             - --realm
-            - StackV
+            - ${KEYCLOAK_REALM}
+            - --users
+            - different_files
+            - --users-per-file
+            - "100"
           env:
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL_HOST
-              value: keycloak-postgresql
+              value: ${KEYCLOAK_DB_HOST}
             - name: KC_DB_URL_PORT
-              value: "5432"
+              value: "${KEYCLOAK_DB_PORT}"
             - name: KC_DB_URL_DATABASE
-              value: keycloak
+              value: ${KEYCLOAK_DB_NAME}
             - name: KC_DB_USERNAME
-              value: keycloak
+              value: ${KEYCLOAK_DB_USER}
             - name: KC_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: keycloak-psql-auth
-                  key: password
+                  name: ${KEYCLOAK_DB_SECRET_NAME}
+                  key: ${KEYCLOAK_DB_SECRET_KEY}
           volumeMounts:
             - name: export-volume
               mountPath: /export
       volumes:
         - name: export-volume
           persistentVolumeClaim:
-            claimName: keycloak-export-pvc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: keycloak-export-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: local-path
-  resources:
-    requests:
-      storage: 256Mi
+            claimName: ${EXPORT_PVC_NAME}

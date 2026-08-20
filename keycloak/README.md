@@ -27,3 +27,10 @@ After creating the password secrets and configuring your override, run `helm ins
 Once ready, the Keycloak Admin Console should be accessible via the established ingress at an address similar to `https://keycloak.sense.es.net/auth/admin/`.
 
 If the ingress was disabled or is non-functional, you can access the web console via port-forwarding with a command like `kubectl port-forward svc/senseo-kc-keycloak- 8282:8080`, which should make it available at ``.
+
+## Realm export
+
+For an offline Keycloak realm export, use
+[`bin/export/export_realm.sh`](bin/export/README.md). The export briefly scales
+Keycloak down while leaving PostgreSQL running, and writes the sensitive result
+to the ignored `keycloak/bin/dumps/` directory unless `--output-dir` is set.

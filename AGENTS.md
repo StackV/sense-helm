@@ -22,6 +22,8 @@ explicitly needs application, migration, or image context; do not make this char
   prerequisite, or deployment behavior changes.
 - Never commit credentials, private keys, keystores, database dumps, or site-specific override values. Local overrides
   belong in ignored files such as `override-*.yaml`.
+- `kubectl` dry-runs and non-mutating experiments against attached clusters are permitted. Any operation that modifies
+  an attached cluster requires explicit user confirmation before execution.
 - Do not manually edit generated dependency contents under `**/charts/`, release packages under `.cr-release-packages/`,
   or `index.yaml` outside the release workflow.
 - Chart changes require a SemVer bump in that chart's `Chart.yaml`. Update `appVersion` only when the deployed
