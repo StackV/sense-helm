@@ -1,0 +1,108 @@
+{{- $portalName := printf "%s-portal" (include "common.name" .) }}
+{{- $allowedOrigins := include "portal.allowedOrigins" . }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ include "common.namespace" . | quote }}
+  labels: {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/component: portal
+  name: {{ $portalName }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels: {{ include "common.labels.match" . | nindent 6 }}
+      app.kubernetes.io/component: portal
+  template:
+    metadata:
+      annotations:
+        stackv/tag: {{ (.Values.image.tag | default .Chart.AppVersion) | quote }}
+        link.argocd.argoproj.io/external-link: https://{{ .Values.ingress.hostname | default .Values.global.domain }}/StackV-web/portal/
+      labels: {{- include "common.labels" . | nindent 8 }}
+        app.kubernetes.io/component: portal
+      name: {{ $portalName }}
+    spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ORIGIN
+              value: {{ .Values.portal.origin | quote }}
+            {{- if not .Values.proxy.unrestricted }}
+            - name: ALLOWED_ORIGINS
+              value: {{ $allowedOrigins | quote }}
+            {{- end }}
+            - name: INSECURE_TLS
+              value: {{ .Values.portal.insecureTls | toString | quote }}
+            {{- if .Values.portal.keycloakUrl }}
+            - name: PORTAL_KC_URL
+              value: {{ .Values.portal.keycloakUrl | quote }}
+            {{- end }}
+            - name: PORTAL_DEFAULT_DEPLOYMENT_NAME
+              value: {{ .Values.portal.defaultDeploymentName | quote }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.probes.startup.custom }}
+          startupProbe: {{- include "common.render" (dict "value" .Values.probes.startup.custom "context" $) | nindent 12 }}
+          {{- else if .Values.probes.startup.enabled }}
+          startupProbe:
+            httpGet:
+              path: /StackV-web/restapi/standalone
+              port: http
+            failureThreshold: 30
+            periodSeconds: 2
+          {{- end }}
+          {{- if .Values.probes.liveness.custom }}
+          livenessProbe: {{- include "common.render" (dict "value" .Values.probes.liveness.custom "context" $) | nindent 12 }}
+          {{- else if .Values.probes.liveness.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /StackV-web/restapi/standalone
+              port: http
+            failureThreshold: 3
+            timeoutSeconds: 5
+          {{- end }}
+          {{- if .Values.probes.readiness.custom }}
+          readinessProbe: {{- include "common.render" (dict "value" .Values.probes.readiness.custom "context" $) | nindent 12 }}
+          {{- else if .Values.probes.readiness.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /StackV-web/portal/
+              port: http
+            timeoutSeconds: 5
+          {{- end }}
+          name: {{ $portalName }}
+          ports:
+            - containerPort: 8887
+              name: http
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+      restartPolicy: Always
+      {{- if .Values.affinity }}
+      affinity: {{- include "common.render" ( dict "value" .Values.affinity "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.render" ( dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "common.render" (dict "value" .Values.tolerations "context" .) | nindent 8 }}
+      {{- end }}

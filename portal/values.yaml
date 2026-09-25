@@ -1,0 +1,107 @@
+### SENSE Portal Configuration
+###
+
+## @section Global Parameters
+##
+#
+global:
+  ## @param global.nameSuffix A name to append to the Release Name.
+  nameSuffix:
+  ## @param global.namespace The target namespace.
+  namespace: sense
+  ## @param global.domain The host domain for the portal.
+  domain: portal.sense.es.net
+
+## @param extraObjects Array of extra K8s manifests to deploy
+## Note: Supports use of custom Helm templates
+extraObjects: [ ]
+
+## @section Portal Parameters
+##
+#
+image:
+  ## @param image.repository Standalone portal image.
+  repository: quay.io/virnao/sense-portal
+  ## @param image.tag Image tag to pull. Defaults to the chart's `appVersion` if unset.
+  tag: dev
+  ## @param image.pullPolicy Portal image pull policy.
+  pullPolicy: Always
+  ## @param image.pullSecrets Secrets for private docker registry access.
+  pullSecrets: [ ]
+#
+portal:
+  ## @param portal.origin Default orchestrator base URL (including `/StackV-web`).
+  origin: https://example.sense.es.net/StackV-web
+  ## @param portal.defaultDeploymentName Label for the default deployment in the portal's connection menu.
+  defaultDeploymentName: Default
+  ## @param portal.keycloakUrl Explicit Keycloak URL. Auto-discovered from the orchestrator if unset.
+  keycloakUrl:
+  ## @param portal.insecureTls If set to `true`, skips upstream orchestrator certificate verification. Development only.
+  insecureTls: false
+#
+proxy:
+  ## @param proxy.allowedOrigins Additional orchestrator origins the portal proxy may forward to. `portal.origin` is always allowed.
+  allowedOrigins: [ ]
+  ## @param proxy.unrestricted If set to `true`, the proxy forwards to any origin a client names.
+  unrestricted: false
+#
+resources:
+  #
+  requests:
+    ## @param resources.requests.cpu Portal CPU request.
+    cpu: 100m
+    ## @param resources.requests.memory Portal memory request.
+    memory: 128Mi
+  #
+  limits:
+    ## @param resources.limits.cpu Portal CPU limit.
+    cpu: 500m
+    ## @param resources.limits.memory Portal memory limit.
+    memory: 512Mi
+#
+service:
+  ## @param service.type Portal service type.
+  type: ClusterIP
+  #
+  ports:
+    ## @param service.ports.http Portal HTTP port.
+    http: 8887
+#
+probes:
+  startup:
+    ## @param probes.startup.enabled Whether to enable the default Portal startup probe.
+    enabled: true
+    ## @param probes.startup.custom A custom override for the Portal startup probe.
+    custom: { }
+  liveness:
+    ## @param probes.liveness.enabled Whether to enable the default Portal liveness probe.
+    enabled: true
+    ## @param probes.liveness.custom A custom override for the Portal liveness probe.
+    custom: { }
+  readiness:
+    ## @param probes.readiness.enabled Whether to enable the default Portal readiness probe.
+    enabled: true
+    ## @param probes.readiness.custom A custom override for the Portal readiness probe.
+    custom: { }
+#
+## @param nodeSelector Portal nodeSelector block.
+nodeSelector: { }
+## @param tolerations Portal tolerations block.
+tolerations: [ ]
+## @param affinity Portal affinity block.
+affinity: { }
+
+## @section Network Parameters
+## Configuration for service exposure and connectivity.
+#
+ingress:
+  ## @param ingress.enabled Whether to enable the Ingress resource.
+  enabled: true
+  ## @param ingress.className Ingress class override. Defaults to the cluster's default ingress class if unset.
+  className:
+  ## @param ingress.hostname Explicit host to be used for the ingress. Defaults to the value of `global.domain` if unset.
+  hostname:
+  ## @param ingress.annotations Any optional annotations for the Ingress, such as a cert-manager issuer.
+  annotations:
+  ## @param ingress.tlsSecret TLS secret name for ingress termination.
+  tlsSecret:

@@ -1,0 +1,11 @@
+{{- define "portal.allowedOrigins" -}}
+{{- if not .Values.portal.origin }}
+{{- fail "portal.origin is required" }}
+{{- end }}
+{{- range $origin := .Values.proxy.allowedOrigins }}
+{{- if not $origin }}
+{{- fail "proxy.allowedOrigins entries must not be empty" }}
+{{- end }}
+{{- end }}
+{{- prepend .Values.proxy.allowedOrigins .Values.portal.origin | uniq | join "," }}
+{{- end -}}

@@ -6,6 +6,7 @@ This repository publishes Helm charts for the SENSE Orchestrator platform:
 
 - `orchestrator/`: `sense-orchestrator`, the full SENSE-O application and backing MySQL container.
 - `keycloak/`: `sense-keycloak`, wrapping KeycloakX and PostgreSQL.
+- `portal/`: `sense-portal`, the stateless standalone SENSE-P web portal and API proxy.
 - `common/`: `sense-commons`, a Helm library chart shared by the application charts.
 - `index.yaml`: generated Helm repository index; change it only as part of a chart release.
 

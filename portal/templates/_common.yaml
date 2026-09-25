@@ -1,0 +1,43 @@
+{{- define "common.render" -}}
+{{- if typeIs "string" .value }}
+{{- tpl .value .context }}
+{{- else }}
+{{- tpl (.value | toYaml) .context }}
+{{- end }}
+{{- end -}}
+
+{{- define "common.namespace" -}}
+{{- if .Values.global.namespace -}}
+{{- .Values.global.namespace -}}
+{{- else -}}
+{{- .Release.Namespace -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "common.name" -}}
+{{- if .Values.global.fullNameOverride -}}
+{{- .Values.global.fullNameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name (default "" .Values.global.nameSuffix) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "common.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "common.labels" -}}
+app.kubernetes.io/name: {{ include "common.name" . }}
+helm.sh/chart: {{ include "common.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{- define "common.labels.match" -}}
+app.kubernetes.io/name: {{ include "common.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
+
+{{- define "common.tlsSecret" -}}
+{{- default (printf "%s-ingress-secret" (include "common.name" .)) .Values.ingress.tlsSecret -}}
+{{- end -}}
