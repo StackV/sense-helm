@@ -464,4 +464,17 @@ entries:
     urls:
     - sense-orchestrator-1.9.2.tgz
     version: 1.9.2
-generated: "2026-07-27T12:06:46.793691-04:00"
+  sense-portal:
+  - apiVersion: v2
+    appVersion: dev
+    created: "2026-09-25T08:08:51.027746-04:00"
+    description: Helm chart for the standalone SENSE Portal (SENSE-P), served apart
+      from the orchestrator.
+    digest: d9993a351216f6b94ce046479dcb1cb58f3ffa32409d59064635efba6879464a
+    keywords:
+    - portal
+    name: sense-portal
+    urls:
+    - sense-portal-0.2.0.tgz
+    version: 0.2.0
+generated: "2026-09-25T08:08:51.028018-04:00"
