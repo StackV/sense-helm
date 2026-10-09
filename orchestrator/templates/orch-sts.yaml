@@ -140,6 +140,12 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.global.credSecret }}
                   key: {{.Values.tls.passwordKey}}
+            - name: SENSE_CRED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.credSecret }}
+                  key: {{ .Values.credStore.masterKey }}
+                  optional: true
             - name: MAIL_PORT
               value: "{{.Values.mail.port}}"
             - name: MAIL_HOST

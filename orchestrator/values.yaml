@@ -116,6 +116,11 @@ tls:
   ## @param tls.keystoreSecret Name of Kubernetes secret for the orchestrator keystore files. If unset, the chart will automatically create a secret with an empty keystore.
   keystoreSecret:
 #
+credStore:
+  ## @param credStore.masterKey Key name of the credential store master key, found in `.global.credSecret`. Must be a base64-encoded 32-byte key, generate with `openssl rand -base64 32`.
+  ## Optional: if the key is absent, the orchestrator runs with its credential store disabled. Losing or changing this key makes every stored credential unrecoverable.
+  masterKey: cred-master-key
+#
 probes:
   startup:
     ## @param probes.startup.enabled Whether to enable the default Orchestrator startup probe.

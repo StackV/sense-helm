@@ -3,6 +3,19 @@
 This chart installs the SENSE Orchestrator on a K8s cluster alongside an embedded MySQL server. For more detailed
 instructions of how this chart can be used, visit https://stackv.github.io/sense-docs/docs/installation/kubernetes.
 
+## Upgrading to 2.2.0
+
+Chart 2.2.0 passes the credential store master key to the orchestrator as `SENSE_CRED_KEY`. The key is optional, but
+without it the credential store is disabled, along with any features that depend on stored credentials. To enable it,
+add a `cred-master-key` entry to the existing `global.credSecret` secret:
+
+```sh
+kubectl -n sense patch secret sense-cred --type merge \
+    -p "{\"stringData\":{\"cred-master-key\":\"$(openssl rand -base64 32)\"}}"
+```
+
+Losing or changing it will make every stored credential unrecoverable and require a reset.
+
 ## Upgrading to 2.0.0
 
 Chart 2.0.0 moves the bundled MySQL server from 5.7 to 9.7. **This is not an in-place upgrade.** MySQL only supports
@@ -25,7 +38,10 @@ commands can be found in `./bin/create_secrets.sh`. Remember to configure your o
 change the defaults.
 
 - `.Values.global.credSecret` (Default `sense-cred`): Various passwords and credentials used by the orchestrator are set
-  here, namely passwords for the database, client TLS and SMTP.
+  here, namely passwords for the database, client TLS and SMTP, and the optional credential store master key
+  (`cred-master-key`). Without the master key, the credential store is disabled. It must be a base64-encoded 32-byte key
+  (`openssl rand -base64 32`), kept stable across upgrades and backed up: losing or changing it makes every stored
+  credential unrecoverable.
 - `.Values.auth.clientSecret` (Default `sense-auth-cred`): The Keycloak connection details are stored here, required for
   securing the application and API.
 - `.Values.tls.keystoreSecret` (Default `sense-keystores`): The orchestrator uses a JKS keystore to enable client-based
@@ -147,6 +163,7 @@ using the orchestrator.
 | `service.ports.debug.debugger`            | Wildfly debug port.                                                                                                                           | `8787`                              |
 | `tls.passwordKey`                         | Key of the password for the orchestrator keystore files, found in `.global.credSecret`.                                                       | `tls-password`                      |
 | `tls.keystoreSecret`                      | Name of Kubernetes secret for the orchestrator keystore files. If unset, the chart will automatically create a secret with an empty keystore. | `nil`                               |
+| `credStore.masterKey`                     | Key name of the credential store master key, found in `.global.credSecret`. Must be a base64-encoded 32-byte key.                             | `cred-master-key`                   |
 | `probes.startup.enabled`                  | Whether to enable the default Orchestrator startup probe.                                                                                     | `true`                              |
 | `probes.startup.custom`                   | A custom override for the Orchestrator startup probe.                                                                                         | `{}`                                |
 | `probes.liveness.enabled`                 | Whether to enable the default Orchestrator liveness probe.                                                                                    | `true`                              |

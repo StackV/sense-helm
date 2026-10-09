@@ -3,7 +3,8 @@
 kubectl create secret generic sense-cred \
     --from-literal=tls-password='TLS_PASSWORD' \
     --from-literal=mysql-password='DB_PASSWORD' \
-    --from-literal=mail-password='MAIL_PASSWORD'
+    --from-literal=mail-password='MAIL_PASSWORD' \
+    --from-literal=cred-master-key="$(openssl rand -base64 32)"
 
 #
 # Modify and run the following to create the required password secret for the chart:

@@ -3,6 +3,14 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart. The release numbering
 uses [semantic versioning](http://semver.org).
 
+## 2.2.0
+
+- Add the new credential store master key to the orchestrator as `SENSE_CRED_KEY`, read from the optional
+  `cred-master-key` key of `global.credSecret` (configurable with `credStore.masterKey`). Without it the orchestrator
+  starts with its credential store disabled, along with any features that depend on stored credentials.
+    - Generate the key with`openssl rand -base64 32`. Losing or changing it will make every stored credential
+      unrecoverable and require reset.
+
 ## 2.1.0
 
 - **Breaking:** Remove redundant `init.enabled`. Control the Flyway migration init container with
