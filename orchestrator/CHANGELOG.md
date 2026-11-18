@@ -3,6 +3,12 @@
 This file documents all notable changes to StackV's main Orchestrator Helm Chart. The release numbering
 uses [semantic versioning](http://semver.org).
 
+## 2.2.1
+
+- Add `java.options`, passed to the orchestrator container as `JDK_JAVA_OPTIONS`. This allows us to set a default
+  `-XX:-UseBASE64Intrinsics` to address Java4Shell (CVE-2026-114938) mitigation, as well as any future required low-
+  level JVM options.
+
 ## 2.2.0
 
 - Add the new credential store master key to the orchestrator as `SENSE_CRED_KEY`, read from the optional

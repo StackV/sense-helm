@@ -3,6 +3,11 @@
 This file documents all notable changes to StackV's pre-configured Keycloak Helm Chart. The release numbering
 uses [semantic versioning](http://semver.org).
 
+## 1.0.2
+
+- Allows setting `JDK_JAVA_OPTIONS` for low-level configuration adjustments, such as mitigating Java4Shell
+  (CVE-2026-114938) regardless of image.
+
 ## 1.0.1
 
 - Pin the PostgreSQL subchart image by digest to avoid floating digest.

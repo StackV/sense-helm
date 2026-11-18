@@ -146,6 +146,8 @@ keycloakx:
       value: http
     - name: JAVA_OPTS_APPEND
       value: "-Xms1024m -Xmx4096m"
+    - name: JDK_JAVA_OPTIONS
+      value: "-XX:-UseBASE64Intrinsics"
 
   ## @param keycloakx.args
   args:

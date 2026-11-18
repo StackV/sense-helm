@@ -126,6 +126,10 @@ spec:
               value: "{{ $mysqlName }}:3306"
             - name: JAVA_MEMORY
               value: "{{ .Values.java.memory }}"
+            {{- with .Values.java.options }}
+            - name: JDK_JAVA_OPTIONS
+              value: {{ . | quote }}
+            {{- end }}
             {{- if .Values.archive.seeding.enabled }}
             - name: ARCHIVE_IMPORT_PATH
               value: {{ .Values.archive.seeding.mountPath | quote }}

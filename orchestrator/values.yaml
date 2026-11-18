@@ -75,6 +75,9 @@ archive:
 java:
   ## @param java.memory JVM Memory maximum.
   memory: 8G
+  ## @param java.options Extra JVM options, passed as `JDK_JAVA_OPTIONS`.
+  ## The below default disables the Base64 intrinsic affected by Java4Shell (CVE-2026-114938); keep it until the image ships a patched JDK.
+  options: "-XX:-UseBASE64Intrinsics"
 #
 resources:
   #
